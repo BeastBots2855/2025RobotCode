@@ -1,5 +1,29 @@
 package frc.robot.subsystems;
 
-public class CoralBox {
+import com.revrobotics.spark.SparkMax;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class CoralBox extends SubsystemBase { 
+    private final SparkMax m_left;
+    private final SparkMax m_right;
+    
+
+    public CoralBox(SparkMax left, SparkMax right){
+        m_left = left;
+        m_right = right;
+    
+    }
+
+    /**
+     * spins the motors on the coral intake/outake, 
+     * range = -1 to 1,
+     * @param speed the speed it spins at
+     */
+    public void spin(double speed){
+        m_left.set(speed);
+        m_right.set(speed);
+
+    }
 
 }
