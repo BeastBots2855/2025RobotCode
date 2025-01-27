@@ -17,7 +17,8 @@ public class CoralBox extends SubsystemBase {
 
     /**
      * spins the motors on the coral intake/outake, 
-     * range = -1 to 1,
+     * range = 0 to 1 coral only needs to go out,
+     * 
      * @param speed the speed it spins at
      */
     public void spin(double speed){
