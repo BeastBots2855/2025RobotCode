@@ -99,4 +99,10 @@ public final class Constants {
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
+
+  public static final class CoralBoxConstants{
+    public static final double kSpeed = 0.5;
+  }
+
+
 }
