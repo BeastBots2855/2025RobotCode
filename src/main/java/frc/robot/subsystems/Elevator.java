@@ -43,6 +43,11 @@ public class Elevator extends SubsystemBase {
     m_left.set(0);
     m_right.set(0);
   }
+
+  public void move(double speed){
+    m_left.set(speed);
+    m_right.set(speed);
+  }
   
   public boolean isLimitSwitchPressed(){
     return m_limitSwitch.get();
