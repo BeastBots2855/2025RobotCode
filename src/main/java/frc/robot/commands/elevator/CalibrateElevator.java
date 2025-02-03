@@ -5,6 +5,7 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class CalibrateElevator extends Command {
@@ -23,9 +24,7 @@ public class CalibrateElevator extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if not m_elevator.isLimitSwitchPressed(){
       m_elevator.move(-0.1);
-    }
   }
 
   // Called once the command ends or is interrupted.
@@ -38,6 +37,6 @@ public class CalibrateElevator extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_elevator.isLimitSwitchPressed();
   }
 }

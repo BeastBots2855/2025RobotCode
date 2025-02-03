@@ -4,15 +4,21 @@
 
 package frc.robot.commands.elevator;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class MoveElevator extends Command {
   /** Creates a new MoveElevator. */
   private Elevator m_elevator;
-  public MoveElevator(Elevator subsystem, double speed) {
+  private DoubleSupplier speedSupplier;
+
+  public MoveElevator(Elevator subsystem, DoubleSupplier speedSupplier ) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_elevator = subsystem;
+    this.speedSupplier = speedSupplier;
     addRequirements(subsystem);
 
 
@@ -25,7 +31,7 @@ public class MoveElevator extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      m_elevator.move(speed);
+      m_elevator.move(speedSupplier.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
