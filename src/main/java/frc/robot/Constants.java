@@ -81,6 +81,7 @@ public final class Constants {
     public static final double kDriveDeadband = 0.05;
     public static final int kOperatorControllerPort = 1;
     public static final double kOperatorDeadband = 0.05;
+    public static final int kFightStickPort = 2;
   }
 
   public static final class AutoConstants {

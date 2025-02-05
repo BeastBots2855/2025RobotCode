@@ -4,7 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.configs.TalonFXSConfigurator;
+import com.ctre.phoenix6.hardware.DeviceIdentifier;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -12,15 +17,30 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase { 
 
-  private final TalonFX m_left;
-  private final TalonFX m_right;
+  private final TalonFXS m_left;
+  private final TalonFXS m_right;
   private final DigitalInput m_limitSwitch;
+  private boolean currentLimitExceeded;
+  
 
   /** Creates a new Elevator. */
-  public Elevator(TalonFX left, TalonFX right, DigitalInput limitswitch) {
+  public Elevator(TalonFXS left, TalonFXS right, DigitalInput limitswitch) {
     m_right = right;
     m_left = left;
     m_limitSwitch = limitswitch;
+
+    //sets up configurator/configuration for both elevator motors
+    TalonFXSConfigurator leftTalonFXSConfigurator = m_left.getConfigurator();
+    TalonFXSConfiguration leftTalonConfiguration = new TalonFXSConfiguration();
+    TalonFXSConfigurator rightTalonFXSConfigurator = m_right.getConfigurator();
+    TalonFXSConfiguration rightTalonConfiguration = new TalonFXSConfiguration();
+
+    //inverts and applies
+    leftTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    leftTalonFXSConfigurator.apply(leftTalonConfiguration);
+    rightTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    rightTalonFXSConfigurator.apply(rightTalonConfiguration);
+    
   }
 
   public void resetEncoders(){
@@ -33,10 +53,17 @@ public class Elevator extends SubsystemBase {
     m_left.setVoltage(voltage);
   }
 
+
+
+  /**
+   * sets the percent output for both motors with positive values drive elevator up
+   * 
+   * @param percentOutput the percent value to set the motor output to
+   * returns void
+   */
   public void setPercentOutput(double percentOutput){
     m_left.set(percentOutput);
     m_right.set(percentOutput);
-    /**may have to invert later */
   } 
 
   public void stop(){
@@ -45,8 +72,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public void move(double speed){
+    if(!currentLimitExceeded){
     m_left.set(speed);
     m_right.set(speed);
+    }
   }
   
   public boolean isLimitSwitchPressed(){
@@ -57,6 +86,12 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if((m_left.getSupplyCurrent().getValueAsDouble() > 20) ||
+      m_right.getSupplyCurrent().getValueAsDouble() > 20) {
+        currentLimitExceeded = true;
+    } else {
+      currentLimitExceeded = false;
+    }
     // This method will be called once per scheduler run
   }
 }
