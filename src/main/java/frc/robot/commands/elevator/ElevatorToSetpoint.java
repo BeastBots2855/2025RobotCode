@@ -4,12 +4,14 @@
 
 package frc.robot.commands.elevator;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class GoToSetpoint extends Command {
+public class ElevatorToSetpoint extends Command {
   /** Creates a new GoToSetpoint. */
-  public GoToSetpoint() {
+  
+  public ElevatorToSetpoint() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

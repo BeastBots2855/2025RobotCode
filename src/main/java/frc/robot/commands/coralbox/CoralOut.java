@@ -4,6 +4,8 @@
 
 package frc.robot.commands.coralbox;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.CoralBoxConstants;
 import frc.robot.subsystems.CoralBox;
@@ -14,7 +16,7 @@ public class CoralOut extends Command {
   private CoralBox m_CoralBox;
 
   /** Creates a new CoralOut. */
-  public CoralOut(CoralBox subsystem) {
+  public CoralOut(CoralBox subsystem, DoubleSupplier speed) {
     m_CoralBox = subsystem;
     addRequirements(subsystem);
     

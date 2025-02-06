@@ -32,6 +32,7 @@ public class MoveElevator extends Command {
   @Override
   public void execute() {
       m_elevator.move(speedSupplier.getAsDouble());
+      System.out.println(speedSupplier.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

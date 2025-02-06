@@ -72,10 +72,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public void move(double speed){
-    if(!currentLimitExceeded){
+    // if(!currentLimitExceeded){
     m_left.set(speed);
     m_right.set(speed);
-    }
+    // }
   }
   
   public boolean isLimitSwitchPressed(){
@@ -92,6 +92,8 @@ public class Elevator extends SubsystemBase {
     } else {
       currentLimitExceeded = false;
     }
+
+    // System.out.println(m_left.getSupplyCurrent().getValueAsDouble());
     // This method will be called once per scheduler run
   }
 }

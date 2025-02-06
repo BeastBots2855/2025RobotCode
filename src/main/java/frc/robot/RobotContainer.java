@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.coralbox.CoralOut;
 import frc.robot.commands.elevator.MoveElevator;
+import frc.robot.subsystems.CoralBox;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,9 +29,13 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import java.util.List;
 
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -50,6 +56,9 @@ public class RobotContainer {
   private final TalonFXS m_right = new TalonFXS(21);
   private final DigitalInput m_elevatorLimitSwitch = new DigitalInput(0);
   private final Elevator m_elevator = new Elevator(m_left, m_right, m_elevatorLimitSwitch);
+  private final SparkMax m_boxMotor = new SparkMax(10, MotorType.kBrushless);
+  private final CoralBox m_CoralBox = new CoralBox(m_boxMotor);
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -85,9 +94,11 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
-    
+    // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
+    new Trigger(()-> Math.abs(m_operatorController.getRightY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
+    
+    m_operatorController.axisGreaterThan(3, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getRightTriggerAxis()));
 
 
 
