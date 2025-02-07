@@ -14,13 +14,14 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ElevatorConstants;
+
 
 public class Elevator extends SubsystemBase { 
 
   private final TalonFXS m_left;
   private final TalonFXS m_right;
   private final DigitalInput m_limitSwitch;
-  private boolean currentLimitExceeded;
   
 
   /** Creates a new Elevator. */
@@ -52,7 +53,7 @@ public class Elevator extends SubsystemBase {
     m_right.setVoltage(voltage);
     m_left.setVoltage(voltage);
   }
-
+// ^ this does the same thing as 'move' but with different units, do we need all these control methods?
 
 
   /**
@@ -65,6 +66,7 @@ public class Elevator extends SubsystemBase {
     m_left.set(percentOutput);
     m_right.set(percentOutput);
   } 
+  // ^ this is exactly the same as 'move' but without the current safeguard, does it need to be here?
 
   public void stop(){
     m_left.set(0);
@@ -72,9 +74,9 @@ public class Elevator extends SubsystemBase {
   }
 
   public void move(double speed){
-    if(!currentLimitExceeded){
-    m_left.set(speed);
-    m_right.set(speed);
+    if(!isCurrentExceeded()){
+      m_left.set(speed);
+      m_right.set(speed);
     }
   }
   
@@ -82,16 +84,18 @@ public class Elevator extends SubsystemBase {
     return m_limitSwitch.get();
   }
 
-
+  /**
+   * Whether or not either motor is currently exceeding the maximum allowed supply current
+   * specified in <code>Constants.ElevatorConstants.kMaxCurrent</code>
+   * @return true if either motor exceeds kMaxCurrent
+   */
+  public boolean isCurrentExceeded(){
+    return m_left.getSupplyCurrent().getValueAsDouble() > ElevatorConstants.kMaxCurrent ||
+            m_right.getSupplyCurrent().getValueAsDouble() > ElevatorConstants.kMaxCurrent;
+  }
 
   @Override
   public void periodic() {
-    if((m_left.getSupplyCurrent().getValueAsDouble() > 20) ||
-      m_right.getSupplyCurrent().getValueAsDouble() > 20) {
-        currentLimitExceeded = true;
-    } else {
-      currentLimitExceeded = false;
-    }
     // This method will be called once per scheduler run
   }
 }

@@ -103,9 +103,11 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
-  public static final class CoralBoxConstants{
+  public static final class CoralBoxConstants {
     public static final double kSpeed = 0.5;
   }
 
-
+  public static final class ElevatorConstants {
+    public static final double kMaxCurrent = 20;
+  }
 }
