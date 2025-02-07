@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -42,6 +43,10 @@ public class Elevator extends SubsystemBase {
     rightTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     rightTalonFXSConfigurator.apply(rightTalonConfiguration);
     
+    //Experimental - should hopefully display subsystem in smartdashboard for easier tuning
+    SmartDashboard.putData(m_right);
+    SmartDashboard.putData(m_left);
+    SmartDashboard.putData(m_limitSwitch);
   }
 
   public void resetEncoders(){
