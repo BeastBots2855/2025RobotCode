@@ -108,6 +108,10 @@ public class Elevator extends SubsystemBase {
     m_right.set(0);
   }
 
+    public double getOutput(){
+      return m_left.getDutyCycle().getValueAsDouble();
+    }
+
   public void move(double speed){
     if(elevatorAtBottom == true && speed < 0){
       speed *= 0;

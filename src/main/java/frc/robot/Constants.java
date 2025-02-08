@@ -111,7 +111,7 @@ public final class Constants {
     public static final double kP = 0.04;
     public static final double kI = 0.000000000000000000000000000000000000000000001;
     public static final double kD = 0.01;
-    public static final double feedForward = 0.1;
+    public static final double feedForward = 0.05;
 }
 
   public static final class ElevatorPIDSetpoints{
@@ -120,7 +120,8 @@ public final class Constants {
     public static final double L2 = 0.0;
     public static final double L3 = 0.0;
     public static final double L4 = 0.0;
-    public static final double Top = 0.0;
+    public static final double Top = 24.15;
+    public static final double Half = 12.07;
   }
 
 }
