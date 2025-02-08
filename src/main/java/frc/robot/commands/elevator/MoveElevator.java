@@ -26,19 +26,21 @@ public class MoveElevator extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_elevator.PIDOff();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
       m_elevator.move(speedSupplier.getAsDouble());
-      System.out.println(speedSupplier.getAsDouble());
+      
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevator.stop();
+    m_elevator.PIDOn();
   }
 
   // Returns true when the command should end.
