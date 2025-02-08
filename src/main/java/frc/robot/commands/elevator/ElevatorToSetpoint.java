@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ElevatorToSetpoint extends Command {
   /** Creates a new GoToSetpoint. */
   
-  public ElevatorToSetpoint() {
+  public ElevatorToSetpoint(double setpoint) {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

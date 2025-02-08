@@ -16,10 +16,14 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.coralbox.CoralOut;
+import frc.robot.commands.elevator.CalibrateElevator;
 import frc.robot.commands.elevator.MoveElevator;
 import frc.robot.subsystems.CoralBox;
 import frc.robot.subsystems.DriveSubsystem;
@@ -51,6 +55,7 @@ public class RobotContainer {
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
   XboxController m_fightstick = new XboxController(OIConstants.kFightStickPort);
+  ShuffleboardTab tab = Shuffleboard.getTab("main tab");
   
   private final TalonFXS m_left = new TalonFXS(20);
   private final TalonFXS m_right = new TalonFXS(21);
@@ -58,6 +63,7 @@ public class RobotContainer {
   private final Elevator m_elevator = new Elevator(m_left, m_right, m_elevatorLimitSwitch);
   private final SparkMax m_boxMotor = new SparkMax(10, MotorType.kBrushless);
   private final CoralBox m_CoralBox = new CoralBox(m_boxMotor);
+
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -77,6 +83,12 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
+
+
+
+
+
+    tab.addDouble("elevator position", ()->m_elevator.getPos());
   }
 
   /**
@@ -100,6 +112,10 @@ public class RobotContainer {
     
     m_operatorController.axisGreaterThan(3, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getRightTriggerAxis()));
 
+    m_operatorController.button(2).onTrue(new CalibrateElevator(m_elevator));
+
+
+    m_operatorController.button(3).onTrue(new RunCommand(()->m_elevator.setSetpoint(ElevatorPIDSetpoints.L1), m_elevator));
 
 
 
@@ -154,4 +170,10 @@ public class RobotContainer {
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
   }
+
+
+
+    public Elevator getElevator(){
+        return m_elevator;
+    }
 }
