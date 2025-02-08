@@ -14,16 +14,22 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.elevator.MoveElevator;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
+
+import com.ctre.phoenix6.hardware.TalonFXS;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -37,7 +43,13 @@ public class RobotContainer {
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
+  CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+  XboxController m_fightstick = new XboxController(OIConstants.kFightStickPort);
+  
+  private final TalonFXS m_left = new TalonFXS(20);
+  private final TalonFXS m_right = new TalonFXS(21);
+  private final DigitalInput m_elevatorLimitSwitch = new DigitalInput(0);
+  private final Elevator m_elevator = new Elevator(m_left, m_right, m_elevatorLimitSwitch);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -72,6 +84,18 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
+
+    m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
+    
+
+
+
+
+
+
+
+
+
   }
 
   /**
