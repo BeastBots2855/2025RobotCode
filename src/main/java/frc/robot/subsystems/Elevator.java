@@ -154,9 +154,12 @@ public class Elevator extends SubsystemBase {
 
 
 
-  //while PID is enabled
-   m_left.set(m_PIDController.calculate(currDesiredSetpoint) + ElevatorConstants.feedForward);
-   m_right.set(m_PIDController.calculate(currDesiredSetpoint) + ElevatorConstants.feedForward);
+  if (isPIDEnabled == true){
+
+   m_left.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
+   m_right.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
+
+  }
    //
 
      

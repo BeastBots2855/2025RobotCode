@@ -89,7 +89,7 @@ public class RobotContainer {
 
 
     tab.addDouble("elevator position", ()->m_elevator.getPos());
-    //tab.addDouble ("elevator output(left)", ()->m_elevator.)
+    tab.addDouble ("elevator output(left)", ()->m_elevator.getOutput());
   }
 
   /**
