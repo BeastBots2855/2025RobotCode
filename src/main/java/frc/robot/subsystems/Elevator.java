@@ -31,6 +31,7 @@ public class Elevator extends SubsystemBase {
   private boolean elevatorAtBottom;
   private PIDController m_PIDController;
   private double currDesiredSetpoint;
+  private boolean isPIDEnabled;
   //private SimpleMotorFeedforward m_Feedforward;
 
   //setpoints to keep elevator stationary, and store the calculation, in that order
@@ -82,6 +83,7 @@ public class Elevator extends SubsystemBase {
 
 
   public void setSetpoint(double setpoint){
+    //re-enable
     currDesiredSetpoint = setpoint;
   }
 
@@ -92,23 +94,26 @@ public class Elevator extends SubsystemBase {
 
 
 
-  /**
-   * sets the percent output for both motors with positive values drive elevator up
-   * 
-   * @param percentOutput the percent value to set the motor output to
-   * returns void
-   */
-  public void setPercentOutput(double percentOutput){
-    m_left.set(percentOutput);
-    m_right.set(percentOutput);
-  } 
+ 
 
   public void stop(){
     m_left.set(0);
     m_right.set(0);
   }
 
+  public void PIDOff(){
+    isPIDEnabled = false;
+  }
+
+  public void PIDOn(){
+    isPIDEnabled = true;
+  }
+
   public void move(double speed){
+    //set isPID enabled to false
+
+
+
     if(elevatorAtBottom == true && speed < 0){
       speed *= 0;
       m_left.set(0);
@@ -144,8 +149,12 @@ public class Elevator extends SubsystemBase {
         elevatorAtBottom = false;
       }
 
-   // m_left.set(m_PIDController.calculate(currDesiredSetpoint) + ElevatorConstants.feedForward);
-   // m_right.set(m_PIDController.calculate(currDesiredSetpoint) + ElevatorConstants.feedForward);
+
+
+  //while PID is enabled
+   m_left.set(m_PIDController.calculate(currDesiredSetpoint) + ElevatorConstants.feedForward);
+   m_right.set(m_PIDController.calculate(currDesiredSetpoint) + ElevatorConstants.feedForward);
+   //
 
      
     // This method will be called once per scheduler run
