@@ -24,6 +24,7 @@ import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.coralbox.CoralOut;
 import frc.robot.commands.elevator.CalibrateElevator;
+import frc.robot.commands.elevator.ElevatorToSetpoint;
 import frc.robot.commands.elevator.MoveElevator;
 import frc.robot.subsystems.CoralBox;
 import frc.robot.subsystems.DriveSubsystem;
@@ -90,6 +91,7 @@ public class RobotContainer {
 
     tab.addDouble("elevator position", ()->m_elevator.getPos());
     tab.addDouble ("elevator output(left)", ()->m_elevator.getOutput());
+    tab.addDouble("elevator Setpoint", ()->m_elevator.getTargetPos());
   }
 
   /**
@@ -113,13 +115,16 @@ public class RobotContainer {
     
     m_operatorController.axisGreaterThan(3, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getRightTriggerAxis()));
 
-    m_operatorController.button(2).onTrue(new CalibrateElevator(m_elevator));
+    //m_operatorController.button(2).onTrue(new CalibrateElevator(m_elevator));
+    
 
 
-    m_operatorController.button(3).onTrue(new RunCommand(()->m_elevator.setSetpoint(ElevatorPIDSetpoints.L1), m_elevator));
+   // m_operatorController.button(3).onTrue(new RunCommand(()->m_elevator.setSetpoint(ElevatorPIDSetpoints.L1), m_elevator));
+   // m_operatorController.button(1).onTrue(new RunCommand(()->m_elevator.setSetpoint(ElevatorPIDSetpoints.L2), m_elevator)); 
+   // m_operatorController.button(4).onTrue(new RunCommand(()->m_elevator.(ElevatorPIDSetpoints.L3), m_elevator));
+   // m_operatorController.button().onTrue(new RunCommand(()->m_elevator.setSetpoint(ElevatorPIDSetpoints.L4), m_elevator));
 
-
-
+    m_operatorController.button(3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
 
 
 

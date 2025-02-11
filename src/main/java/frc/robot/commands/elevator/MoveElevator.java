@@ -41,7 +41,7 @@ public class MoveElevator extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevator.PIDOn();
+    m_elevator.move(ElevatorConstants.feedForward);
   }
 
   // Returns true when the command should end.

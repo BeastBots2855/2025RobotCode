@@ -25,8 +25,8 @@ public class ElevatorToSetpoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_elevator.PIDOn();
     m_elevator.setSetpoint(setpoint);
+    m_elevator.PIDOn();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

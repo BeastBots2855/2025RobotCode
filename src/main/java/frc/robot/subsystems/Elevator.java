@@ -85,6 +85,7 @@ public class Elevator extends SubsystemBase {
   public void setSetpoint(double setpoint){
     //re-enable
     currDesiredSetpoint = setpoint;
+    m_PIDController.setSetpoint(setpoint);
   }
 
 
@@ -113,7 +114,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void move(double speed){
-    //set isPID enabled to false
+    isPIDEnabled = false;
 
 
 
@@ -135,6 +136,10 @@ public class Elevator extends SubsystemBase {
   public double getPos(){
     return m_left.getPosition().getValueAsDouble();
   }
+  public double getTargetPos(){
+    return currDesiredSetpoint;
+  }
+ 
 
 
   @Override
@@ -156,8 +161,9 @@ public class Elevator extends SubsystemBase {
 
   if (isPIDEnabled == true){
 
-   m_left.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
-   m_right.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
+   //m_left.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
+   //m_right.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
+   move(m_PIDController.calculate(getPos() + ElevatorConstants.feedForward));
 
   }
    //
