@@ -8,6 +8,8 @@ import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfigurator;
 import com.ctre.phoenix6.controls.MusicTone;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.DeviceIdentifier;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -18,8 +20,11 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ElevatorPIDSetpoints;
 
 
 public class Elevator extends SubsystemBase { 
@@ -28,7 +33,6 @@ public class Elevator extends SubsystemBase {
   private final TalonFXS m_right;
   private final DigitalInput m_limitSwitch;
   private boolean currentLimitExceeded;
-  private boolean elevatorAtBottom;
   private PIDController m_PIDController;
   private double currDesiredSetpoint;
   private boolean isPIDEnabled;
@@ -69,6 +73,10 @@ public class Elevator extends SubsystemBase {
     m_left.setControl(obnoxiousAsHellTone);
     m_right.setControl(obnoxiousAsHellTone);
     
+    ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
+    tab.add(m_left);
+    tab.add(m_right);
+    tab.add(m_limitSwitch);
   }
 
   public void resetEncoders(){
@@ -118,8 +126,8 @@ public class Elevator extends SubsystemBase {
 
 
 
-    if(elevatorAtBottom == true && speed < 0){
-      speed *= 0;
+    if(m_limitSwitch.get() && speed < 0){
+      speed = 0;
       m_left.set(0);
      m_right.set(0);
      System.out.println("at bottom");
@@ -144,31 +152,19 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if((m_left.getSupplyCurrent().getValueAsDouble() > 20) ||
-      m_right.getSupplyCurrent().getValueAsDouble() > 20) {
-        currentLimitExceeded = true;
-    } else {
-      currentLimitExceeded = false;
+    currentLimitExceeded = ((m_left.getSupplyCurrent().getValueAsDouble() > 20) ||
+      m_right.getSupplyCurrent().getValueAsDouble() > 20);
+
+
+    final PositionDutyCycle m_request = new PositionDutyCycle(0).withSlot(0);
+
+    if (isPIDEnabled){
+
+     m_left.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
+     m_right.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
+    // move(m_PIDController.calculate(getPos() + ElevatorConstants.feedForward));
+      //m_left.setControl(m_request.withPosition(currDesiredSetpoint));
+     // m_right.setControl(m_request.withPosition(currDesiredSetpoint));
     }
-
-      if(m_limitSwitch.get()){
-        elevatorAtBottom = true;
-      } else{
-        elevatorAtBottom = false;
-      }
-
-
-
-  if (isPIDEnabled == true){
-
-   //m_left.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
-   //m_right.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
-   move(m_PIDController.calculate(getPos() + ElevatorConstants.feedForward));
-
-  }
-   //
-
-     
-    // This method will be called once per scheduler run
   }
 }

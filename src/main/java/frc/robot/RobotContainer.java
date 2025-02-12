@@ -114,6 +114,7 @@ public class RobotContainer {
     new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
     
     m_operatorController.axisGreaterThan(3, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getRightTriggerAxis()));
+    m_operatorController.axisGreaterThan(2, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getLeftTriggerAxis() * -1));
 
     //m_operatorController.button(2).onTrue(new CalibrateElevator(m_elevator));
     
@@ -124,8 +125,10 @@ public class RobotContainer {
    // m_operatorController.button(4).onTrue(new RunCommand(()->m_elevator.(ElevatorPIDSetpoints.L3), m_elevator));
    // m_operatorController.button().onTrue(new RunCommand(()->m_elevator.setSetpoint(ElevatorPIDSetpoints.L4), m_elevator));
 
-    m_operatorController.button(3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
-
+    m_operatorController.button(3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
+    m_operatorController.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
+    m_operatorController.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
+    m_operatorController.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
 
 
 
