@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfigurator;
+import com.ctre.phoenix6.hardware.TalonFX;
 // Import only what is needed for the Elevator subsystem functionality.
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -122,6 +123,7 @@ public class Elevator extends SubsystemBase {
     rightTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     leftTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
+    
     // --------------------------------------------------------------------------
     // Apply the configurations to the motor controllers.
     // --------------------------------------------------------------------------
@@ -156,6 +158,8 @@ public class Elevator extends SubsystemBase {
   public void setSetpoint(double setpoint) {
     currDesiredSetpoint = setpoint;
   }
+
+  
 
   /**
   * Stops the elevator by setting motor outputs to zero.
