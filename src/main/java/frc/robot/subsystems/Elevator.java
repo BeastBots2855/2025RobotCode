@@ -65,7 +65,13 @@ public class Elevator extends SubsystemBase {
     TalonFXSConfiguration rightTalonConfiguration = new TalonFXSConfiguration();
 
     // --------------------------------------------------------------------------
-    // Configure slot 0 parameters for the left elevator motor.
+    // Configure slot 0 parameters for the left elevator motor. This all exists
+    // for the sake of using a trapezoidal motion profile for the elevator. The 
+    // calculations are entirely handled on the motoro controller we just need to 
+    // give it some values to be able to perform the calculations with. Also important 
+    // to note that trapezoidal motion profile is just callecd motion magic by CTRE
+    // so if you want to look at doucmentation you should go and look at the docs for
+    // TalongFXS and look for motion magic.
     // Gains and feedforward constants:
     // kS: Static friction voltage,
     // kV: Velocity constant,
