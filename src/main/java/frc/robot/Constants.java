@@ -108,8 +108,8 @@ public final class Constants {
   }
 
   public static final class ElevatorConstants{
-    public static final double kP = 0.1;
-    public static final double kI = 0.02;
+    public static final double kP = 0.033;
+    public static final double kI = 0.0;
     public static final double kD = 0.01;
     public static final double feedForward = 0.3;
 }
@@ -118,7 +118,7 @@ public final class Constants {
     public static final double Base = 0.0;
     public static final double L1 = 4.0;
     public static final double L2 = 4.5;
-    public static final double L3 = 6.8;
+    public static final double L3 = 6.7;
     public static final double L4 = 12.0;
     public static final double Top = 24.15;
     public static final double Half = 12.07;

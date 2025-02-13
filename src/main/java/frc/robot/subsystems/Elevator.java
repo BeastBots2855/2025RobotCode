@@ -96,6 +96,10 @@ public class Elevator extends SubsystemBase {
     m_PIDController.setSetpoint(setpoint);
   }
 
+  // public void foo(double setpoint){
+  //     m_left.motionMagic
+  // }
+
 
 
 
@@ -155,7 +159,6 @@ public class Elevator extends SubsystemBase {
     currentLimitExceeded = ((m_left.getSupplyCurrent().getValueAsDouble() > 20) ||
       m_right.getSupplyCurrent().getValueAsDouble() > 20);
 
-
     final PositionDutyCycle m_request = new PositionDutyCycle(0).withSlot(0);
 
     if (isPIDEnabled){
@@ -163,8 +166,6 @@ public class Elevator extends SubsystemBase {
      m_left.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
      m_right.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
     // move(m_PIDController.calculate(getPos() + ElevatorConstants.feedForward));
-      //m_left.setControl(m_request.withPosition(currDesiredSetpoint));
-     // m_right.setControl(m_request.withPosition(currDesiredSetpoint));
     }
   }
 }
