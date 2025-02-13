@@ -4,167 +4,260 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfigurator;
-import com.ctre.phoenix6.controls.MusicTone;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.DeviceIdentifier;
-import com.ctre.phoenix6.hardware.TalonFX;
+// Import only what is needed for the Elevator subsystem functionality.
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.ElevatorPIDSetpoints;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MusicTone;
 
+/**
+ * Elevator subsystem for controlling the elevator mechanism.
+ *
+ * This subsystem manages two TalonFXS motor controllers (left and right), utilizes a limit switch
+ * for safety, and uses a PIDController to manage the elevator's position.
+ */
+public class Elevator extends SubsystemBase {
 
-public class Elevator extends SubsystemBase { 
-
+  // Motor controllers for the elevator's left and right sides.
   private final TalonFXS m_left;
   private final TalonFXS m_right;
+
+  // Limit switch to detect the elevator's bottom (or top) position for safety.
   private final DigitalInput m_limitSwitch;
+
+  // Flag to track if the current has exceeded the safe threshold.
   private boolean currentLimitExceeded;
-  private PIDController m_PIDController;
+
+  // The current desired setpoint for the elevator position.
   private double currDesiredSetpoint;
+
+  // Flag indicating whether PID control is enabled.
   private boolean isPIDEnabled;
-  //private SimpleMotorFeedforward m_Feedforward;
 
-  //setpoints to keep elevator stationary, and store the calculation, in that order
-  //private double breakModeSetpoint;
-  //private double feedForwardSetpoint; 
-
-  /** Creates a new Elevator. */
+  /**
+   * Constructs a new Elevator subsystem.
+   *
+   * @param left The left TalonFXS motor controller.
+   * @param right The right TalonFXS motor controller.
+   * @param limitswitch The digital input for the elevator limit switch.
+   */
   public Elevator(TalonFXS left, TalonFXS right, DigitalInput limitswitch) {
+    // Initialize motor controllers and limit switch.
     m_right = right;
     m_left = left;
     m_limitSwitch = limitswitch;
-    m_PIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
 
+    // Set both motors to brake mode for safety when disabled.
     m_left.setNeutralMode(NeutralModeValue.Brake);
     m_right.setNeutralMode(NeutralModeValue.Brake);
-    
 
-
-    
-
-    //sets up configurator/configuration for both elevator motors
+    // --------------------------------------------------------------------------
+    // Set up configurators and configurations for both elevator motor controllers.
+    // --------------------------------------------------------------------------
     TalonFXSConfigurator leftTalonFXSConfigurator = m_left.getConfigurator();
     TalonFXSConfiguration leftTalonConfiguration = new TalonFXSConfiguration();
     TalonFXSConfigurator rightTalonFXSConfigurator = m_right.getConfigurator();
     TalonFXSConfiguration rightTalonConfiguration = new TalonFXSConfiguration();
 
-    //inverts and applies
-    leftTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    leftTalonFXSConfigurator.apply(leftTalonConfiguration);
+    // --------------------------------------------------------------------------
+    // Configure slot 0 parameters for the left elevator motor.
+    // Gains and feedforward constants:
+    // kS: Static friction voltage,
+    // kV: Velocity constant,
+    // kA: Acceleration constant,
+    // kP: Proportional gain,
+    // kI: Integral gain,
+    // kD: Derivative gain.
+    // --------------------------------------------------------------------------
+    var slot0ConfigsLeft = leftTalonConfiguration.Slot0;
+    slot0ConfigsLeft.kS = 0.4; // Overcome static friction
+    slot0ConfigsLeft.kV = 0.213; // Voltage per unit of velocity
+    slot0ConfigsLeft.kA = 0.00; // Voltage per unit of acceleration (not used)
+    slot0ConfigsLeft.kP = 0.2; // Proportional gain for position control
+    slot0ConfigsLeft.kI = 0;   // Integral gain (disabled)
+    slot0ConfigsLeft.kD = 0.000; // Derivative gain
+
+    // --------------------------------------------------------------------------
+    // Configure Motion Magic parameters for the left elevator motor.
+    // Motion Magic provides smooth motion profiling.
+    // --------------------------------------------------------------------------
+    var leftMotionMagicConfigs = leftTalonConfiguration.MotionMagic;
+    leftMotionMagicConfigs.MotionMagicCruiseVelocity = 64; // Cruise velocity in rps
+    leftMotionMagicConfigs.MotionMagicAcceleration = 640;    // Acceleration in rps/s
+    leftMotionMagicConfigs.MotionMagicJerk = 1600;           // Jerk in rps/s/s
+
+    // --------------------------------------------------------------------------
+    // Configure slot 0 parameters for the right elevator motor (same as left).
+    // --------------------------------------------------------------------------
+    var slot0ConfigsRight = rightTalonConfiguration.Slot0;
+    slot0ConfigsRight.kS = 0.4;
+    slot0ConfigsRight.kV = 0.213;
+    slot0ConfigsRight.kA = 0.00;
+    slot0ConfigsRight.kP = 0.2;
+    slot0ConfigsRight.kI = 0;
+    slot0ConfigsRight.kD = 0.0;
+
+    // --------------------------------------------------------------------------
+    // Configure Motion Magic parameters for the right elevator motor.
+    // --------------------------------------------------------------------------
+    var rightMotionMagicConfigs = rightTalonConfiguration.MotionMagic;
+    rightMotionMagicConfigs.MotionMagicCruiseVelocity = 64;
+    rightMotionMagicConfigs.MotionMagicAcceleration = 640;
+    rightMotionMagicConfigs.MotionMagicJerk = 1600;
+
+    // --------------------------------------------------------------------------
+    // Set the motor output inversion so that the motor rotates in the proper direction.
+    // --------------------------------------------------------------------------
     rightTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    leftTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    // --------------------------------------------------------------------------
+    // Apply the configurations to the motor controllers.
+    // --------------------------------------------------------------------------
+    leftTalonFXSConfigurator.apply(leftTalonConfiguration);
     rightTalonFXSConfigurator.apply(rightTalonConfiguration);
-
-
-    MusicTone obnoxiousAsHellTone = new MusicTone(20000);
-    m_left.setControl(obnoxiousAsHellTone);
-    m_right.setControl(obnoxiousAsHellTone);
-    
-    ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
-    tab.add(m_left);
-    tab.add(m_right);
-    tab.add(m_limitSwitch);
   }
 
-  public void resetEncoders(){
+  /**
+   * Resets the encoder positions of both elevator motors to zero.
+   */
+  public void resetEncoders() {
     m_right.setPosition(0);
     m_left.setPosition(0);
   }
 
-  public void setVoltage(double voltage){
+  /**
+  * Sets the voltage output for both elevator motors.
+  *
+  * @param voltage The voltage to apply to the motors.
+  */
+  public void setVoltage(double voltage) {
     m_right.setVoltage(voltage);
     m_left.setVoltage(voltage);
   }
 
-
-  public void setSetpoint(double setpoint){
-    //re-enable
+  /**
+  * Updates the desired setpoint for the elevator position. 
+  *
+  * @param setpoint The new setpoint for elevator positioning. The units are the number 
+  * of rotations of the motor's output shaft.
+  */
+  public void setSetpoint(double setpoint) {
     currDesiredSetpoint = setpoint;
-    m_PIDController.setSetpoint(setpoint);
   }
 
-
-
-
-
-
-
-
- 
-
-  public void stop(){
+  /**
+  * Stops the elevator by setting motor outputs to zero.
+  */
+  public void stop() {
     m_left.set(0);
     m_right.set(0);
   }
 
-    public double getOutput(){
-      return m_left.getDutyCycle().getValueAsDouble();
-    }
-  public void PIDOff(){
+  /**
+  * Returns the output duty cycle of the left elevator motor.
+  *
+  * @return The duty cycle as a double value.
+  */
+  public double getOutput() {
+    return m_left.getDutyCycle().getValueAsDouble();
+  }
+
+  /**
+  * Disables PID control.
+  */
+  public void PIDOff() {
     isPIDEnabled = false;
   }
 
-  public void PIDOn(){
+  /**
+  * Enables PID control.
+  */
+  public void PIDOn() {
     isPIDEnabled = true;
   }
 
-  public void move(double speed){
+  /**
+  * Moves the elevator at a specified speed.
+  * 
+  * If the limit switch is activated and the speed is negative (attempting to move down),
+  * the function sets the speed to zero and stops the motors.
+  * Otherwise, it scales the speed and applies it to both motors.
+  *
+  * @param speed The desired speed for the elevator.
+  */
+  public void move(double speed) {
+    // Disable PID control while manually controlling the elevator.
     isPIDEnabled = false;
 
-
-
-    if(m_limitSwitch.get() && speed < 0){
-      speed = 0;
-      m_left.set(0);
-     m_right.set(0);
-     System.out.println("at bottom");
-    }else{
-      m_left.set(speed *= .25);
-      m_right.set(speed *= .25);
-      System.out.println("running");
+    if (m_limitSwitch.get() && speed < 0) {
+        // Limit switch is triggered and attempting to move downward.
+        speed = 0;
+        m_left.set(0);
+        m_right.set(0);
+        System.out.println("at bottom");
+    } else {
+        // Scale speed by 0.25 and apply to both motors.
+        m_left.set(speed *= .25);
+        m_right.set(speed *= .25);
+        System.out.println("running");
     }
   }
-  
-  public boolean isLimitSwitchPressed(){
+
+  /**
+  * Returns the state of the limit switch.
+  *
+  * @return True if the limit switch is pressed, false otherwise.
+  */
+  public boolean isLimitSwitchPressed() {
     return m_limitSwitch.get();
   }
-  public double getPos(){
+
+  /**
+  * Retrieves the current position of the elevator from the left motor's encoder.
+  *
+  * @return The current position as a double value.
+  */
+  public double getPos() {
     return m_left.getPosition().getValueAsDouble();
   }
-  public double getTargetPos(){
+
+  /**
+  * Provides the current target setpoint for the elevator.
+  *
+  * @return The target position as a double value.
+  */
+  public double getTargetPos() {
     return currDesiredSetpoint;
   }
- 
+
 
 
   @Override
   public void periodic() {
-    currentLimitExceeded = ((m_left.getSupplyCurrent().getValueAsDouble() > 20) ||
-      m_right.getSupplyCurrent().getValueAsDouble() > 20);
-
-
-    final PositionDutyCycle m_request = new PositionDutyCycle(0).withSlot(0);
-
-    if (isPIDEnabled){
-
-     m_left.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
-     m_right.set(m_PIDController.calculate(getPos()) + ElevatorConstants.feedForward);
-    // move(m_PIDController.calculate(getPos() + ElevatorConstants.feedForward));
-      //m_left.setControl(m_request.withPosition(currDesiredSetpoint));
-     // m_right.setControl(m_request.withPosition(currDesiredSetpoint));
-    }
+      // Check if the supply current for either motor exceeds 20 Amps and update the flag.
+      currentLimitExceeded = ((m_left.getSupplyCurrent().getValueAsDouble() > 20) ||
+                              (m_right.getSupplyCurrent().getValueAsDouble() > 20));
+  
+      // If PID control is enabled, create a MotionMagicVoltage command using the current setpoint
+      // and apply it to both motors for smooth positional control. We are setting the setpiont in 
+      // rotations but the method of controlling the motors is via voltage rather than percent output
+      // hence the name MotionMagicVoltage.
+      if (isPIDEnabled) {
+          final MotionMagicVoltage setpointWithVoltage = new MotionMagicVoltage(currDesiredSetpoint);
+          m_left.setControl(setpointWithVoltage);
+          m_right.setControl(setpointWithVoltage);
+      }
+  
+      // Create a MusicTone with 0 frequency (a silent tone) and apply it to both motors.
+      // This seems to override any previous motor control commands, ensuring the motors are silent.
+      MusicTone silentTone = new MusicTone(0);
+      m_left.setControl(silentTone);
+      m_right.setControl(silentTone);
   }
 }
