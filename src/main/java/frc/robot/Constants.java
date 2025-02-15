@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.utilities.RGBColor;
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -104,7 +106,7 @@ public final class Constants {
   }
 
   public static final class CoralBoxConstants{
-    public static final double kSpeed = 0.5;
+    public static final double kSpeed = 1.0;
   }
 
   public static final class ElevatorConstants{
@@ -122,6 +124,16 @@ public final class Constants {
     public static final double L4 = 23;
     public static final double Top = 24.15;
     public static final double Half = 12.07;
+  }
+
+  public static final class Colors{
+    public static final RGBColor red = new RGBColor(255, 0, 0);
+    public static final RGBColor blue = new RGBColor(0, 0, 255);
+    public static final RGBColor green = new RGBColor(0, 255, 0);
+    public static final RGBColor purple = new RGBColor(150, 0, 150);
+    public static final RGBColor yellow = new RGBColor(255, 100, 0);
+    public static final RGBColor cyan = new RGBColor(0, 150, 150);
+    public static final RGBColor orange = new RGBColor(255, 50, 0);
   }
 
 }

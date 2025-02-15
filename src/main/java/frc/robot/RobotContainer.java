@@ -22,6 +22,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.LEDCommands.RAINBOWS;
 import frc.robot.commands.coralbox.CoralJuggle;
 import frc.robot.commands.coralbox.CoralOut;
 import frc.robot.commands.elevator.CalibrateElevator;
@@ -30,7 +31,9 @@ import frc.robot.commands.elevator.MoveElevator;
 import frc.robot.subsystems.CoralBox;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LED;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -65,6 +68,8 @@ public class RobotContainer {
   private final Elevator m_elevator = new Elevator(m_left, m_right, m_elevatorLimitSwitch);
   private final SparkMax m_boxMotor = new SparkMax(10, MotorType.kBrushless);
   private final CoralBox m_CoralBox = new CoralBox(m_boxMotor);
+  private final LED m_ledStringLeft = new LED(0);
+//   private final LED m_ledStringRight = new LED(1);
 
   
   /**
@@ -93,6 +98,9 @@ public class RobotContainer {
     tab.addDouble("elevator position", ()->m_elevator.getPos());
     tab.addDouble ("elevator output(left)", ()->m_elevator.getOutput());
     tab.addDouble("elevator Setpoint", ()->m_elevator.getTargetPos());
+
+    // CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledStringLeft));
+    // CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledStringRight));
   }
 
   /**
@@ -117,7 +125,7 @@ public class RobotContainer {
     m_operatorController.axisGreaterThan(3, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getRightTriggerAxis()));
     m_operatorController.axisGreaterThan(2, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getLeftTriggerAxis() * -1));
     m_fightstick.axisGreaterThan(2, 0.5).whileTrue(new CoralJuggle(m_CoralBox, ()->m_fightstick.getLeftTriggerAxis()));
-    m_fightstick.axisGreaterThan(3, 0.5).whileTrue(new CoralOut(m_CoralBox, ()->m_fightstick.getRightTriggerAxis()));
+    m_fightstick.axisGreaterThan(3, 0.5).whileTrue(new CoralOut(m_CoralBox, ()->m_fightstick.getRightTriggerAxis() * -0.5));
 
 
     //m_operatorController.button(2).onTrue(new CalibrateElevator(m_elevator));
@@ -193,4 +201,12 @@ public class RobotContainer {
     public Elevator getElevator(){
         return m_elevator;
     }
+
+    public LED getLEDLeft(){
+        return m_ledStringLeft;
+    }
+
+    // public LED getLEDRight(){
+    //     return m_ledStringRight;
+    // }
 }
