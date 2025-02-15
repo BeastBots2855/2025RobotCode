@@ -14,10 +14,12 @@ import frc.robot.subsystems.CoralBox;
 public class CoralOut extends Command {
 
   private CoralBox m_CoralBox;
+  private DoubleSupplier m_speed;
 
   /** Creates a new CoralOut. */
   public CoralOut(CoralBox subsystem, DoubleSupplier speed) {
     m_CoralBox = subsystem;
+    m_speed = speed;
     addRequirements(subsystem);
     
   }
@@ -30,7 +32,7 @@ public class CoralOut extends Command {
   @Override
   public void execute() {
 
-    m_CoralBox.spin(CoralBoxConstants.kSpeed);
+    m_CoralBox.spin(m_speed.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

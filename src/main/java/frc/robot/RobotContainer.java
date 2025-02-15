@@ -22,6 +22,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.coralbox.CoralJuggle;
 import frc.robot.commands.coralbox.CoralOut;
 import frc.robot.commands.elevator.CalibrateElevator;
 import frc.robot.commands.elevator.ElevatorToSetpoint;
@@ -55,7 +56,7 @@ public class RobotContainer {
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
-  XboxController m_fightstick = new XboxController(OIConstants.kFightStickPort);
+  CommandXboxController m_fightstick = new CommandXboxController(OIConstants.kFightStickPort);
   ShuffleboardTab tab = Shuffleboard.getTab("main tab");
   
   private final TalonFXS m_left = new TalonFXS(20);
@@ -115,6 +116,9 @@ public class RobotContainer {
     
     m_operatorController.axisGreaterThan(3, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getRightTriggerAxis()));
     m_operatorController.axisGreaterThan(2, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getLeftTriggerAxis() * -1));
+    m_fightstick.axisGreaterThan(2, 0.5).whileTrue(new CoralJuggle(m_CoralBox, ()->m_fightstick.getLeftTriggerAxis()));
+    m_fightstick.axisGreaterThan(3, 0.5).whileTrue(new CoralOut(m_CoralBox, ()->m_fightstick.getRightTriggerAxis()));
+
 
     //m_operatorController.button(2).onTrue(new CalibrateElevator(m_elevator));
     
@@ -129,8 +133,12 @@ public class RobotContainer {
     m_operatorController.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
     m_operatorController.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
     m_operatorController.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
-
-
+    m_fightstick.button(3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
+    m_fightstick.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
+    m_fightstick.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
+    m_fightstick.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
+    m_fightstick.button(5).onTrue(new CoralOut(m_CoralBox, ()-> 0.5));
+    
 
   }
 

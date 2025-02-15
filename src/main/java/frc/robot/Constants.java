@@ -117,9 +117,9 @@ public final class Constants {
   public static final class ElevatorPIDSetpoints{
     public static final double Base = 0.0;
     public static final double L1 = 4.0;
-    public static final double L2 = 4.5;
-    public static final double L3 = 6.8;
-    public static final double L4 = 12.0;
+    public static final double L2 = 5.47;
+    public static final double L3 = 12.28;
+    public static final double L4 = 23;
     public static final double Top = 24.15;
     public static final double Half = 12.07;
   }

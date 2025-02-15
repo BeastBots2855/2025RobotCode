@@ -9,10 +9,14 @@ import com.ctre.phoenix6.configs.TalonFXSConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 // Import only what is needed for the Elevator subsystem functionality.
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ElevatorConstants;
+
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.MusicTone;
 
@@ -83,39 +87,43 @@ public class Elevator extends SubsystemBase {
     // --------------------------------------------------------------------------
     var slot0ConfigsLeft = leftTalonConfiguration.Slot0;
     slot0ConfigsLeft.kS = 0.4; // Overcome static friction
-    slot0ConfigsLeft.kV = 0.213; // Voltage per unit of velocity
+    slot0ConfigsLeft.kV = 0.09; // Voltage per unit of velocity
     slot0ConfigsLeft.kA = 0.00; // Voltage per unit of acceleration (not used)
-    slot0ConfigsLeft.kP = 0.2; // Proportional gain for position control
+    slot0ConfigsLeft.kP = 0.55; // Proportional gain for position control
     slot0ConfigsLeft.kI = 0;   // Integral gain (disabled)
     slot0ConfigsLeft.kD = 0.000; // Derivative gain
+    slot0ConfigsLeft.kG = 0.5;
+    slot0ConfigsLeft.withGravityType(GravityTypeValue.Elevator_Static);
 
     // --------------------------------------------------------------------------
     // Configure Motion Magic parameters for the left elevator motor.
     // Motion Magic provides smooth motion profiling.
     // --------------------------------------------------------------------------
     var leftMotionMagicConfigs = leftTalonConfiguration.MotionMagic;
-    leftMotionMagicConfigs.MotionMagicCruiseVelocity = 64; // Cruise velocity in rps
-    leftMotionMagicConfigs.MotionMagicAcceleration = 640;    // Acceleration in rps/s
+    leftMotionMagicConfigs.MotionMagicCruiseVelocity = 50; // Cruise velocity in rps
+    leftMotionMagicConfigs.MotionMagicAcceleration = 200;    // Acceleration in rps/s
     leftMotionMagicConfigs.MotionMagicJerk = 1600;           // Jerk in rps/s/s
 
     // --------------------------------------------------------------------------
     // Configure slot 0 parameters for the right elevator motor (same as left).
     // --------------------------------------------------------------------------
     var slot0ConfigsRight = rightTalonConfiguration.Slot0;
-    slot0ConfigsRight.kS = 0.4;
-    slot0ConfigsRight.kV = 0.213;
+    slot0ConfigsRight.kS = 0.4; //0.4
+    slot0ConfigsRight.kV = 0.09; //0.213
     slot0ConfigsRight.kA = 0.00;
-    slot0ConfigsRight.kP = 0.2;
+    slot0ConfigsRight.kP = 0.55;
     slot0ConfigsRight.kI = 0;
     slot0ConfigsRight.kD = 0.0;
+    slot0ConfigsRight.kG = 0.5;
+    slot0ConfigsRight.withGravityType(GravityTypeValue.Elevator_Static);
 
     // --------------------------------------------------------------------------
     // Configure Motion Magic parameters for the right elevator motor.
     // --------------------------------------------------------------------------
     var rightMotionMagicConfigs = rightTalonConfiguration.MotionMagic;
-    rightMotionMagicConfigs.MotionMagicCruiseVelocity = 64;
-    rightMotionMagicConfigs.MotionMagicAcceleration = 640;
-    rightMotionMagicConfigs.MotionMagicJerk = 1600;
+    rightMotionMagicConfigs.MotionMagicCruiseVelocity = 50; //64, 10, 50
+    rightMotionMagicConfigs.MotionMagicAcceleration = 200; //640, 30, 100
+    rightMotionMagicConfigs.MotionMagicJerk = 1600; //1600
 
     // --------------------------------------------------------------------------
     // Set the motor output inversion so that the motor rotates in the proper direction.
@@ -129,6 +137,9 @@ public class Elevator extends SubsystemBase {
     // --------------------------------------------------------------------------
     leftTalonFXSConfigurator.apply(leftTalonConfiguration);
     rightTalonFXSConfigurator.apply(rightTalonConfiguration);
+
+
+    stop();
   }
 
   /**
@@ -167,6 +178,13 @@ public class Elevator extends SubsystemBase {
   public void stop() {
     m_left.set(0);
     m_right.set(0);
+
+    isPIDEnabled = false;
+  }
+
+  public void hold(){
+    m_left.set(ElevatorConstants.feedForward);
+    m_right.set(ElevatorConstants.feedForward);
   }
 
   /**
@@ -212,9 +230,11 @@ public class Elevator extends SubsystemBase {
         m_right.set(0);
         System.out.println("at bottom");
     } else {
+      
         // Scale speed by 0.25 and apply to both motors.
-        m_left.set(speed *= .25);
-        m_right.set(speed *= .25);
+
+        m_left.set(speed *= .15);
+        m_right.set(speed *= .15);
         System.out.println("running");
     }
   }
@@ -259,9 +279,10 @@ public class Elevator extends SubsystemBase {
       // rotations but the method of controlling the motors is via voltage rather than percent output
       // hence the name MotionMagicVoltage.
       if (isPIDEnabled) {
-          final MotionMagicVoltage setpointWithVoltage = new MotionMagicVoltage(currDesiredSetpoint);
-          m_left.setControl(setpointWithVoltage);
+          final MotionMagicVoltage setpointWithVoltage = new MotionMagicVoltage(0);
+          m_left.setControl(setpointWithVoltage.withPosition(currDesiredSetpoint));
           m_right.setControl(setpointWithVoltage);
+          
       }
   
       // Create a MusicTone with 0 frequency (a silent tone) and apply it to both motors.
@@ -269,5 +290,8 @@ public class Elevator extends SubsystemBase {
       MusicTone silentTone = new MusicTone(0);
       m_left.setControl(silentTone);
       m_right.setControl(silentTone);
+
+      SmartDashboard.putNumber("LEFTTTTTTT", m_left.getPosition().getValueAsDouble());
+      SmartDashboard.putNumber("RIGHTTTT", m_right.getPosition().getValueAsDouble());
   }
 }
