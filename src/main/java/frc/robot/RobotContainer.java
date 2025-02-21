@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorPIDSetpoints;
@@ -94,6 +95,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
+    
 
 
 
@@ -103,11 +105,15 @@ public class RobotContainer {
     tab.addDouble ("elevator output(left)", ()->m_elevator.getOutput());
     tab.addDouble("elevator Setpoint", ()->m_elevator.getTargetPos());
     tab.addDouble("distance sensor", ()->m_CoralBox.getDistance());
+    SmartDashboard.putData(m_robotDrive);
+    tab.addDouble("XPos", () -> m_robotDrive.getPose().getX());
+    tab.addDouble("YPos", () -> m_robotDrive.getPose().getY());
 
     m_ledString.setColor(Constants.Colors.yellow);
 
-    // CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledStringLeft));
+    //CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledString));
     // CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledStringRight));
+    m_ledString.setDefaultCommand(new RunCommand(()->m_ledString.setColor(255,100,0)));
   }
 
   /**
@@ -157,6 +163,7 @@ public class RobotContainer {
     m_fightstick.button(10).onTrue(new CalibrateElevator(m_elevator));
     //fightstick intake to lightsensor button 6
     m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));
+    new JoystickButton(m_driverController, 8).onTrue(new RunCommand(()->m_robotDrive.zeroHeading()));
 
   }
 

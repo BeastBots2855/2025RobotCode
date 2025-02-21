@@ -26,7 +26,7 @@ public class CoralHold extends Command {
   @Override
   public void execute() {
     if(!(m_CoralBox.getDistance() < 145)){
-      m_CoralBox.spin(.5);
+      m_CoralBox.spin(.6);
     }else{
     m_CoralBox.spin(0);
     }
