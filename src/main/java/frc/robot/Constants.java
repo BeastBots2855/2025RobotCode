@@ -35,7 +35,7 @@ public final class Constants {
     public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
     public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
 
-    
+
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(26.5);
     // Distance between centers of right and left wheels on robot
@@ -123,7 +123,7 @@ public final class Constants {
 }
 
   public static final class ElevatorPIDSetpoints{
-    public static final double Base = 0.0;
+    public static final double Base = 1.0;
     public static final double L1 = 4.0;
     public static final double L2 = 5.47;
     public static final double L3 = 12.28;

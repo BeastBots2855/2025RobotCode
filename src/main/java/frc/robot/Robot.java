@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_robotContainer.getElevator().resetEncoders();
-    m_robotContainer.getLEDLeft().setColor(Colors.yellow);
+    m_robotContainer.getLED().setColor(Colors.yellow);
     
   }
 

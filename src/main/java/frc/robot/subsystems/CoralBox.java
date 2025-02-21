@@ -1,16 +1,20 @@
 package frc.robot.subsystems;
 
+import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CoralBox extends SubsystemBase { 
     private final SparkMax m_boxMotor;
+    private final TimeOfFlight m_lightSensor;
   
     
 
     public CoralBox(SparkMax boxMotor){
         m_boxMotor = boxMotor;
+        m_lightSensor = new TimeOfFlight(30);
         
     
     }
@@ -27,4 +31,12 @@ public class CoralBox extends SubsystemBase {
 
     }
 
+    public double getDistance(){
+        return m_lightSensor.getRange();
+    }
+
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("Dst sensor (smartdashboard)", getDistance());
+    }
 }

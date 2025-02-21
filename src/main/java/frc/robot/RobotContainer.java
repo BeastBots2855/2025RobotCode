@@ -22,16 +22,19 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
+import frc.robot.utilities.RGBColor;
 import frc.robot.commands.LEDCommands.RAINBOWS;
+import frc.robot.commands.coralbox.CoralHold;
 import frc.robot.commands.coralbox.CoralJuggle;
 import frc.robot.commands.coralbox.CoralOut;
 import frc.robot.commands.elevator.CalibrateElevator;
 import frc.robot.commands.elevator.ElevatorToSetpoint;
 import frc.robot.commands.elevator.MoveElevator;
 import frc.robot.subsystems.CoralBox;
-import frc.robot.subsystems.DriveSubsystemOld;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LED;
+import frc.robot.utilities.RGBColor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -45,6 +48,7 @@ import java.util.List;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+//import LEDS
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -54,7 +58,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystemOld m_robotDrive = new DriveSubsystemOld();
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -68,7 +72,7 @@ public class RobotContainer {
   private final Elevator m_elevator = new Elevator(m_left, m_right, m_elevatorLimitSwitch);
   private final SparkMax m_boxMotor = new SparkMax(10, MotorType.kBrushless);
   private final CoralBox m_CoralBox = new CoralBox(m_boxMotor);
-  private final LED m_ledStringLeft = new LED(0);
+  private final LED m_ledString = new LED(0);
 //   private final LED m_ledStringRight = new LED(1);
 
   
@@ -98,6 +102,9 @@ public class RobotContainer {
     tab.addDouble("elevator position", ()->m_elevator.getPos());
     tab.addDouble ("elevator output(left)", ()->m_elevator.getOutput());
     tab.addDouble("elevator Setpoint", ()->m_elevator.getTargetPos());
+    tab.addDouble("distance sensor", ()->m_CoralBox.getDistance());
+
+    m_ledString.setColor(Constants.Colors.yellow);
 
     // CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledStringLeft));
     // CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledStringRight));
@@ -141,12 +148,15 @@ public class RobotContainer {
     m_operatorController.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
     m_operatorController.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
     m_operatorController.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
-    m_fightstick.button(3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
+    m_fightstick.button(9).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
     m_fightstick.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
     m_fightstick.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
     m_fightstick.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
     m_fightstick.button(5).onTrue(new CoralOut(m_CoralBox, ()-> 0.5));
-    
+    m_fightstick.button(3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator).andThen(new RunCommand(()->m_elevator.PIDOff())));
+    m_fightstick.button(10).onTrue(new CalibrateElevator(m_elevator));
+    //fightstick intake to lightsensor button 6
+    m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));
 
   }
 
@@ -202,8 +212,8 @@ public class RobotContainer {
         return m_elevator;
     }
 
-    public LED getLEDLeft(){
-        return m_ledStringLeft;
+    public LED getLED(){
+        return m_ledString;
     }
 
     // public LED getLEDRight(){
