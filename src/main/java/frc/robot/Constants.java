@@ -37,9 +37,9 @@ public final class Constants {
 
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    public static final double kTrackWidth = Units.inchesToMeters(26);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
+    public static final double kWheelBase = Units.inchesToMeters(26);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -123,11 +123,11 @@ public final class Constants {
 }
 
   public static final class ElevatorPIDSetpoints{
-    public static final double Base = 1.0;
+    public static final double Base = .5;
     public static final double L1 = 4.0;
-    public static final double L2 = 5.47;
-    public static final double L3 = 12.28;
-    public static final double L4 = 24;
+    public static final double L2 = 6.47; //5.47
+    public static final double L3 = 13.7; //12.28
+    public static final double L4 = 24.8; //24
     public static final double Top = 24.15;
     public static final double Half = 12.07;
   }

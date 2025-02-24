@@ -148,6 +148,7 @@ public class Elevator extends SubsystemBase {
   public void resetEncoders() {
     m_right.setPosition(0);
     m_left.setPosition(0);
+    System.out.println("reset encoders");
   }
 
   /**
@@ -245,7 +246,7 @@ public class Elevator extends SubsystemBase {
   * @return True if the limit switch is pressed, false otherwise.
   */
   public boolean isLimitSwitchPressed() {
-    return m_limitSwitch.get();
+    return !m_limitSwitch.get();
   }
 
   /**

@@ -38,8 +38,11 @@ import frc.robot.subsystems.LED;
 import frc.robot.utilities.RGBColor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -108,12 +111,13 @@ public class RobotContainer {
     SmartDashboard.putData(m_robotDrive);
     tab.addDouble("XPos", () -> m_robotDrive.getPose().getX());
     tab.addDouble("YPos", () -> m_robotDrive.getPose().getY());
-
-    m_ledString.setColor(Constants.Colors.yellow);
+    tab.addDouble("robot angle", ()->m_robotDrive.getHeading());
+    tab.addBoolean("limitSwitch pressed", ()->m_elevator.isLimitSwitchPressed());
+    //m_ledString.setColor(Constants.Colors.yellow);
 
     //CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledString));
     // CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledStringRight));
-    m_ledString.setDefaultCommand(new RunCommand(()->m_ledString.setColor(255,100,0)));
+    //m_ledString.setDefaultCommand(new RunCommand(()->m_ledString.setColor(255,100,0)));
   }
 
   /**
@@ -134,6 +138,24 @@ public class RobotContainer {
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
     new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
+    new Trigger(()->m_driverController.getRightTriggerAxis() > .3).whileTrue(new RunCommand(
+      () -> m_robotDrive.drive(
+          -MathUtil.applyDeadband(m_driverController.getLeftY() * .25, OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(m_driverController.getLeftX() * .25, OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(m_driverController.getRightX() * .25, OIConstants.kDriveDeadband),
+          true),
+      m_robotDrive));
+      new Trigger(()->m_elevator.isLimitSwitchPressed() == true).onTrue(new WaitCommand(.1).andThen(new InstantCommand(()->m_elevator.resetEncoders())));
+      new Trigger(()->m_elevator.getPos() > ElevatorPIDSetpoints.L2).whileTrue(new RunCommand(
+        () -> m_robotDrive.drive(
+            -MathUtil.applyDeadband(m_driverController.getLeftY() * .1, OIConstants.kDriveDeadband),
+            -MathUtil.applyDeadband(m_driverController.getLeftX() * .1, OIConstants.kDriveDeadband),
+            -MathUtil.applyDeadband(m_driverController.getRightX() * .1, OIConstants.kDriveDeadband),
+            true),
+        m_robotDrive));
+
+
+
     
     m_operatorController.axisGreaterThan(3, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getRightTriggerAxis()));
     m_operatorController.axisGreaterThan(2, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getLeftTriggerAxis() * -1));
@@ -159,11 +181,13 @@ public class RobotContainer {
     m_fightstick.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
     m_fightstick.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
     m_fightstick.button(5).onTrue(new CoralOut(m_CoralBox, ()-> 0.5));
-    m_fightstick.button(3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator).andThen(new RunCommand(()->m_elevator.PIDOff())));
-    m_fightstick.button(10).onTrue(new CalibrateElevator(m_elevator));
+    m_fightstick.button(
+      3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator).andThen(new RunCommand(()->m_elevator.PIDOff())));
+    m_fightstick.button(10).onTrue(new InstantCommand(()->m_elevator.resetEncoders()));
     //fightstick intake to lightsensor button 6
     m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));
-    new JoystickButton(m_driverController, 8).onTrue(new RunCommand(()->m_robotDrive.zeroHeading()));
+    new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroHeading()
+    ));//new RunCommand(()->m_robotDrive.zeroHeading()));
 
   }
 
@@ -174,43 +198,45 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
+    // TrajectoryConfig config = new TrajectoryConfig(
+    //     AutoConstants.kMaxSpeedMetersPerSecond,
+    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+    //     // Add kinematics to ensure max speed is actually obeyed
+    //     .setKinematics(DriveConstants.kDriveKinematics);
 
-    // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        config);
+    // // An example trajectory to follow. All units in meters.
+    // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+    //     new Pose2d(0, 0, new Rotation2d(0)),
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+    //     // End 3 meters straight ahead of where we started, facing forward
+    //     new Pose2d(3, 0, new Rotation2d(0)),
+    //     config);
 
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    // var thetaController = new ProfiledPIDController(
+    //     AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    // thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
+    // SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    //     exampleTrajectory,
+    //     m_robotDrive::getPose, // Functional interface to feed supplier
+    //     DriveConstants.kDriveKinematics,
 
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
+    //     // Position controllers
+    //     new PIDController(AutoConstants.kPXController, 0, 0),
+    //     new PIDController(AutoConstants.kPYController, 0, 0),
+    //     thetaController,
+    //     m_robotDrive::setModuleStates,
+    //     m_robotDrive);
 
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+    // // Reset odometry to the starting pose of the trajectory.
+    // m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    // // Run path following command, then stop at the end.
+    // return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+
+    return new CoralHold(m_CoralBox);
   }
 
 
