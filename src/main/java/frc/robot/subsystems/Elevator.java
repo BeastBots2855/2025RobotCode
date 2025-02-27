@@ -294,6 +294,8 @@ public class Elevator extends SubsystemBase {
 
       SmartDashboard.putNumber("LEFTTTTTTT", m_left.getPosition().getValueAsDouble());
       SmartDashboard.putNumber("RIGHTTTT", m_right.getPosition().getValueAsDouble());
+      SmartDashboard.putNumber("Setpoint", currDesiredSetpoint);
+      SmartDashboard.putBoolean("At Setpoint", isAtSetpoint());
   }
 
   /**
@@ -301,7 +303,6 @@ public class Elevator extends SubsystemBase {
    * @return if the elevator is within half a rotation of the setpoint
    */
   public boolean isAtSetpoint(){
-   return getPos() - getTargetPos() < .5;
-    
+   return Math.abs(getPos() - getTargetPos()) < .5;
   }
 }

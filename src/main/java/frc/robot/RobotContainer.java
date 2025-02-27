@@ -87,14 +87,20 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    Command CoralHold = new CoralHold(m_CoralBox);
+    Command ElevatorToBase = new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator);
+    Command ElevatorToL3 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator);
+    Command ElevatorToL2 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator);
+    Command ElevatorToL4 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator);
+    Command CoralOut = new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed());
     //auto named commands
-    NamedCommands.registerCommand("CoralHold", new CoralHold(m_CoralBox));
+    NamedCommands.registerCommand("CoralHold", CoralHold);
     NamedCommands.registerCommand("TestEvent", new PrintCommand("TestEvent"));
-    NamedCommands.registerCommand("ElevatorToL4", new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
-    NamedCommands.registerCommand("ElevatorToL3", new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
-    NamedCommands.registerCommand("ElevatorToL2", new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
-    NamedCommands.registerCommand("ElevatorToBase", new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator));
-    NamedCommands.registerCommand("CoralOut", new CoralOut(m_CoralBox,()->m_CoralBox.getAutoCoralSpeed()));
+    NamedCommands.registerCommand("ElevatorToL4", ElevatorToL4);
+    NamedCommands.registerCommand("ElevatorToL3", ElevatorToL3);
+    NamedCommands.registerCommand("ElevatorToL2", ElevatorToL2);
+    NamedCommands.registerCommand("ElevatorToBase",ElevatorToBase);
+    NamedCommands.registerCommand("CoralOut",CoralOut);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -125,6 +131,12 @@ public class RobotContainer {
     tab.addDouble("YPos", () -> m_robotDrive.getPose().getY());
     tab.addDouble("robot angle", ()->m_robotDrive.getHeading());
     tab.addBoolean("limitSwitch pressed", ()->m_elevator.isLimitSwitchPressed());
+    tab.add("Elevator to Base", ElevatorToBase);
+    tab.add("Elevator to L2", ElevatorToL2);
+    tab.add("Elevator to L3", ElevatorToL3);
+    tab.add("Elevator to L4", ElevatorToL4);
+    tab.add(CoralOut);
+    tab.add(CoralHold);
     //m_ledString.setColor(Constants.Colors.yellow);
 
     //CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledString));
