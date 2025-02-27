@@ -35,6 +35,11 @@ public class CoralBox extends SubsystemBase {
         return m_lightSensor.getRange();
     }
 
+    public double getAutoCoralSpeed(){
+        return 1.0;
+    }
+
+
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Dst sensor (smartdashboard)", getDistance());

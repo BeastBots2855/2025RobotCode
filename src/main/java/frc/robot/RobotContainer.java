@@ -50,6 +50,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.List;
 
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 //import LEDS
@@ -84,6 +87,15 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    //auto named commands
+    NamedCommands.registerCommand("CoralHold", new CoralHold(m_CoralBox));
+    NamedCommands.registerCommand("TestEvent", new PrintCommand("TestEvent"));
+    NamedCommands.registerCommand("ElevatorToL4", new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
+    NamedCommands.registerCommand("ElevatorToL3", new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
+    NamedCommands.registerCommand("ElevatorToL2", new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
+    NamedCommands.registerCommand("ElevatorToBase", new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator));
+    NamedCommands.registerCommand("CoralOut", new CoralOut(m_CoralBox,()->m_CoralBox.getAutoCoralSpeed()));
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -138,6 +150,10 @@ public class RobotContainer {
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
     new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
+   
+   /**
+    * driver can slow robot to 25% output by pressing either trigger
+    */
     new Trigger(()->m_driverController.getRightTriggerAxis() > .3).whileTrue(new RunCommand(
       () -> m_robotDrive.drive(
           -MathUtil.applyDeadband(m_driverController.getLeftY() * .25, OIConstants.kDriveDeadband),
@@ -145,7 +161,19 @@ public class RobotContainer {
           -MathUtil.applyDeadband(m_driverController.getRightX() * .25, OIConstants.kDriveDeadband),
           true),
       m_robotDrive));
+    new Trigger(()->m_driverController.getLeftTriggerAxis() > .3).whileTrue(new RunCommand(() -> m_robotDrive.drive(
+      -MathUtil.applyDeadband(m_driverController.getLeftY() * .25, OIConstants.kDriveDeadband),
+      -MathUtil.applyDeadband(m_driverController.getLeftX() * .25, OIConstants.kDriveDeadband),
+      -MathUtil.applyDeadband(m_driverController.getRightX() * .25, OIConstants.kDriveDeadband),
+      true),
+  m_robotDrive));
+      
       new Trigger(()->m_elevator.isLimitSwitchPressed() == true).onTrue(new WaitCommand(.1).andThen(new InstantCommand(()->m_elevator.resetEncoders())));
+    
+    /**
+     * slows drive to 10% when elevator is above L2
+     */
+    
       new Trigger(()->m_elevator.getPos() > ElevatorPIDSetpoints.L2).whileTrue(new RunCommand(
         () -> m_robotDrive.drive(
             -MathUtil.applyDeadband(m_driverController.getLeftY() * .1, OIConstants.kDriveDeadband),
@@ -197,6 +225,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return new PathPlannerAuto("LeftSideAuto");
+    // return AutoBuilder.buildAuto("TestAuto");
+    // return new PathPlannerAuto("TestAuto");
+    // return new PrintCommand("yeah");
     // Create config for trajectory
     // TrajectoryConfig config = new TrajectoryConfig(
     //     AutoConstants.kMaxSpeedMetersPerSecond,
@@ -236,7 +268,7 @@ public class RobotContainer {
     // // Run path following command, then stop at the end.
     // return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
 
-    return new CoralHold(m_CoralBox);
+   
   }
 
 

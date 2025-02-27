@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -105,7 +109,21 @@ public final class Constants {
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+
+    public static final PIDConstants kPIDDrive = new PIDConstants(3.2,0.0,0.2);
+    public static final PIDConstants kPIDRot = new PIDConstants(3.0, 0.0, 0.0);
+
+    public static final double kMassKg = 135/2.2;
+    //public static final ModuleConfig moduleconfig = new ModuleConfig(ModuleConstants.kWheelDiameterMeters/2, DriveConstants.kMaxSpeedMetersPerSecond, 1, , 60.0, 0);
+
+  //   public static final RobotConfig config = new RobotConfig(
+  //    kMassKg,
+  //    kMassKg*.1*DriveConstants.kTrackWidth*DriveConstants.kTrackWidth,
+  //    null,
+  //     null);
   }
+
+
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
@@ -123,7 +141,7 @@ public final class Constants {
 }
 
   public static final class ElevatorPIDSetpoints{
-    public static final double Base = .5;
+    public static final double Base = .45;
     public static final double L1 = 4.0;
     public static final double L2 = 6.47; //5.47
     public static final double L3 = 13.7; //12.28
