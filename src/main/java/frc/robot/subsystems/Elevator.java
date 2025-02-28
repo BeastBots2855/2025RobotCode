@@ -12,6 +12,8 @@ import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -305,5 +307,20 @@ public class Elevator extends SubsystemBase {
   public boolean isAtSetpoint(){
     System.out.println("is at setpoint" + (getTargetPos() - getPos()));
    return((Math.abs(getTargetPos() - getPos())) < .5);
+  }
+
+  /**
+   * Allows subsystem data to be displayed on Shuffleboard
+   */
+  @Override
+  public void initSendable(SendableBuilder builder){
+    builder.setSmartDashboardType("Elevator Subsystem");
+    builder.addStringProperty("Now running:", () -> getCurrentCommand().getName(), null);
+    builder.addDoubleProperty("Position", this::getPos, null);
+    builder.addDoubleProperty("Output", this::getOutput, null);
+    builder.addBooleanProperty("Limit Switch", this::isLimitSwitchPressed, null);
+    builder.addBooleanProperty("PID Enabled", () -> isPIDEnabled, null);
+    builder.addDoubleProperty("Setpoint", this::getTargetPos, null);
+    builder.addBooleanProperty("At setpoint?", this::isAtSetpoint, null);
   }
 }
