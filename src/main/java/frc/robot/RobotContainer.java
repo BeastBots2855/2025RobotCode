@@ -27,12 +27,14 @@ import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
 import frc.robot.utilities.RGBColor;
 import frc.robot.commands.LEDCommands.RAINBOWS;
+import frc.robot.commands.algaearm.MoveArm;
 import frc.robot.commands.coralbox.CoralHold;
 import frc.robot.commands.coralbox.CoralJuggle;
 import frc.robot.commands.coralbox.CoralOut;
 import frc.robot.commands.elevator.CalibrateElevator;
 import frc.robot.commands.elevator.ElevatorToSetpoint;
 import frc.robot.commands.elevator.MoveElevator;
+import frc.robot.subsystems.AlgaeArm;
 import frc.robot.subsystems.CoralBox;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
@@ -80,8 +82,10 @@ public class RobotContainer {
   private final DigitalInput m_elevatorLimitSwitch = new DigitalInput(0);
   private final Elevator m_elevator = new Elevator(m_left, m_right, m_elevatorLimitSwitch);
   private final SparkMax m_boxMotor = new SparkMax(10, MotorType.kBrushless);
+  private final SparkMax m_AlgaeArmMotor = new SparkMax(11, MotorType.kBrushless);
   private final CoralBox m_CoralBox = new CoralBox(m_boxMotor);
   private final LED m_ledString = new LED(0);
+  private final AlgaeArm m_AlgaeArm = new AlgaeArm(m_AlgaeArmMotor);
 //   private final LED m_ledStringRight = new LED(1);
 
   
@@ -188,6 +192,9 @@ public class RobotContainer {
   m_robotDrive));
       
       new Trigger(()->m_elevator.isLimitSwitchPressed() == true).onTrue(new WaitCommand(.1).andThen(new InstantCommand(()->m_elevator.resetEncoders())));
+
+      new Trigger(()->Math.abs(m_fightstick.getLeftY()) > .5).whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
+      new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1).whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
     
     /**
      * slows drive to 10% when elevator is above L2
