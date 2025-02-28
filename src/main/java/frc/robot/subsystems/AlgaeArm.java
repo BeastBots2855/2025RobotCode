@@ -4,11 +4,27 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
+import com.revrobotics.spark.SparkMax;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeArm extends SubsystemBase {
   /** Creates a new AlgaeArm. */
-  public AlgaeArm() {}
+  private final SparkMax m_AlgaeArmMotor;
+  public AlgaeArm(SparkMax motor) {
+    m_AlgaeArmMotor = motor;
+  }
+
+  public void move(Double speed){
+    speed *= .25;
+    m_AlgaeArmMotor.set(speed);
+  }
+
+  public void stop(){
+    m_AlgaeArmMotor.set(0);
+  }
 
   @Override
   public void periodic() {
