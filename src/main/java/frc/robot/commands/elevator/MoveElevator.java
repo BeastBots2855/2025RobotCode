@@ -6,6 +6,7 @@ package frc.robot.commands.elevator;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
@@ -29,6 +30,7 @@ public class MoveElevator extends Command {
   @Override
   public void initialize() {
     m_elevator.PIDOff();
+    DataLogManager.log("start cmd: " + getName());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -42,6 +44,7 @@ public class MoveElevator extends Command {
   @Override
   public void end(boolean interrupted) {
     m_elevator.move(ElevatorConstants.feedForward);
+    DataLogManager.log(interrupted ? "interrupt cmd: " + getName() : "end cmd: " + getName());
   }
 
   // Returns true when the command should end.

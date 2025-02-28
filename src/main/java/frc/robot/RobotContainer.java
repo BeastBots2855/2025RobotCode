@@ -14,7 +14,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -87,6 +89,11 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    //start logging
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());  //logs joystick and button inputs
+    DataLogManager.log("Log started");
+
     Command CoralHold = new CoralHold(m_CoralBox);
     Command ElevatorToBase = new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator);
     Command ElevatorToL3 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator);

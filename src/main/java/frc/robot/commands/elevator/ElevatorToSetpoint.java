@@ -5,6 +5,7 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.Elevator;
@@ -20,6 +21,7 @@ public class ElevatorToSetpoint extends Command {
     this.setpoint = setpoint;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
+    setName(getName() + setpoint);  //so multiple instances can be distinguished
   }
 
   // Called when the command is initially scheduled.
@@ -27,6 +29,7 @@ public class ElevatorToSetpoint extends Command {
   public void initialize() {
     m_elevator.setSetpoint(setpoint);
     m_elevator.PIDOn();
+    DataLogManager.log("start cmd: " + getName());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,7 +39,7 @@ public class ElevatorToSetpoint extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("reached elevator setpoint");
+    DataLogManager.log(interrupted ? "interrupt cmd: " + getName() : "end cmd: " + getName());
   }
 
   // Returns true when the command should end.
