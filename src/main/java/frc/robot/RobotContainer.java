@@ -25,6 +25,7 @@ import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
 import frc.robot.utilities.RGBColor;
 import frc.robot.commands.LEDCommands.RAINBOWS;
+import frc.robot.commands.algaearm.AutoDeploy;
 import frc.robot.commands.algaearm.MoveArm;
 import frc.robot.commands.coralbox.CoralHold;
 import frc.robot.commands.coralbox.CoralJuggle;
@@ -141,6 +142,7 @@ public class RobotContainer {
     tab.add("Elevator to L4", ElevatorToL4);
     tab.add(CoralOut);
     tab.add(CoralHold);
+    tab.addDouble("algae arm cuurent", ()->m_AlgaeArm.getCurrent());
     //m_ledString.setColor(Constants.Colors.yellow);
 
     //CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledString));
@@ -208,7 +210,9 @@ public class RobotContainer {
     m_operatorController.axisGreaterThan(2, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getLeftTriggerAxis() * -1));
     m_fightstick.axisGreaterThan(2, 0.5).whileTrue(new CoralJuggle(m_CoralBox, ()->m_fightstick.getLeftTriggerAxis()));
     m_fightstick.axisGreaterThan(3, 0.5).whileTrue(new CoralOut(m_CoralBox, ()->m_fightstick.getRightTriggerAxis() * -0.5));
-
+    m_fightstick.axisGreaterThan(3, 0.5).whileTrue(new AutoDeploy(m_AlgaeArm, ()->m_CoralBox.getDistance() > 145));
+    m_operatorController.axisGreaterThan(3, 0.5).whileTrue(new AutoDeploy(m_AlgaeArm, ()->m_CoralBox.getDistance() > 145));
+  
 
     //m_operatorController.button(2).onTrue(new CalibrateElevator(m_elevator));
     

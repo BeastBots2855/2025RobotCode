@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -159,5 +161,8 @@ public final class Constants {
     public static final RGBColor cyan = new RGBColor(0, 150, 150);
     public static final RGBColor orange = new RGBColor(255, 50, 0);
   }
+
+ 
+  
 
 }

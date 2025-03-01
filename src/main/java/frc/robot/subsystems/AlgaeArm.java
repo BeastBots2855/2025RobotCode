@@ -4,15 +4,18 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+
 public class AlgaeArm extends SubsystemBase {
   /** Creates a new AlgaeArm. */
   private final SparkMax m_AlgaeArmMotor;
+
   public AlgaeArm(SparkMax motor) {
     m_AlgaeArmMotor = motor;
   }
@@ -25,6 +28,11 @@ public class AlgaeArm extends SubsystemBase {
   public void stop(){
     m_AlgaeArmMotor.set(0);
   }
+
+ public double getCurrent(){
+  return m_AlgaeArmMotor.getOutputCurrent();
+ }
+  
 
   @Override
   public void periodic() {

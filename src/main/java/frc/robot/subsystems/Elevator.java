@@ -304,6 +304,7 @@ public class Elevator extends SubsystemBase {
    */
   public boolean isAtSetpoint(){
     System.out.println("is at setpoint" + (getTargetPos() - getPos()));
-   return((Math.abs(getTargetPos() - getPos())) < .5);
+   return((Math.abs(getTargetPos() - getPos())) < 1);
+
   }
 }
