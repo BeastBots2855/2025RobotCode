@@ -6,6 +6,7 @@ package frc.robot.commands.coralbox;
 
 import java.util.function.DoubleSupplier;
 import frc.robot.Constants.CoralBoxConstants;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralBox;
@@ -32,7 +33,7 @@ public class CoralJuggle extends Command {
     m_timer.reset();
     m_timer.start();
     forward = true;
-    
+    DataLogManager.log("start cmd: " + getName());
   }
 
   private void spinForward(){
@@ -63,6 +64,7 @@ public class CoralJuggle extends Command {
   @Override
   public void end(boolean interrupted) {
     m_CoralBox.spin(0);
+    DataLogManager.log(interrupted ? "interrupt cmd: " + getName() : "end cmd: " + getName());
   }
 
   // Returns true when the command should end.
