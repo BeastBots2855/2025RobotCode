@@ -39,6 +39,7 @@ import frc.robot.commands.elevator.CalibrateElevator;
 import frc.robot.commands.elevator.ElevatorToSetpoint;
 import frc.robot.commands.elevator.MoveElevator;
 import frc.robot.subsystems.AlgaeArm;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.CoralBox;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
@@ -81,6 +82,10 @@ public class RobotContainer {
   CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
   CommandXboxController m_fightstick = new CommandXboxController(OIConstants.kFightStickPort);
   ShuffleboardTab tab = Shuffleboard.getTab("main tab");
+
+
+  private final SparkMax m_rightClimb = new SparkMax(41, MotorType.kBrushless);
+  private final SparkMax m_lefClimb = new SparkMax(42, MotorType.kBrushless);
   
   private final TalonFXS m_left = new TalonFXS(20);
   private final TalonFXS m_right = new TalonFXS(21);
@@ -92,6 +97,7 @@ public class RobotContainer {
   private final LED m_ledString = new LED(0);
   private final AlgaeArm m_AlgaeArm = new AlgaeArm(m_AlgaeArmMotor);
   private SendableChooser<String> autoChooser;
+  private final Climb m_Climb = new Climb(m_boxMotor, m_AlgaeArmMotor);
 //   private final LED m_ledStringRight = new LED(1);
 
   
@@ -189,6 +195,15 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
+    new JoystickButton(m_driverController, 3)
+        .whileTrue(new RunCommand(
+          () -> m_Climb.Spin(.25), m_Climb
+          ));        
+     new JoystickButton(m_driverController, 2)
+        .whileTrue(new RunCommand(
+           () -> m_Climb.Spin(-.25), m_Climb
+            ));        
+
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
     new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
@@ -211,7 +226,7 @@ public class RobotContainer {
   m_robotDrive));
       
       new Trigger(()->m_elevator.isLimitSwitchPressed() == true).onTrue(new WaitCommand(.1).andThen(new InstantCommand(()->m_elevator.resetEncoders())));
-
+      
       new Trigger(()->Math.abs(m_fightstick.getLeftY()) > .5).whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
       new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1).whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
     
