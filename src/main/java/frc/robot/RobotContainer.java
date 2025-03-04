@@ -59,7 +59,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -84,6 +86,8 @@ public class RobotContainer {
   CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
   CommandXboxController m_fightstick = new CommandXboxController(OIConstants.kFightStickPort);
   ShuffleboardTab tab = Shuffleboard.getTab("main tab");
+
+  private final Map<String, Command> namedCommands;
 
 
   private final SparkMax m_rightClimb = new SparkMax(41, MotorType.kBrushless);
@@ -114,24 +118,33 @@ public class RobotContainer {
     DriverStation.startDataLog(DataLogManager.getLog());  //logs joystick and button inputs
     DataLogManager.log("Log started");
 
-    Command CoralHold = new CoralHold(m_CoralBox);
-    Command ElevatorToBase = new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator);
-    Command ElevatorToL1 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator);
-    Command ElevatorToL3 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator);
-    Command ElevatorToL2 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator);
-    Command ElevatorToL4 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator);
-    Command CoralOut = new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed());
-    Command autonamousCoralOut = new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed(), true); 
+    namedCommands = new HashMap<>();
+    namedCommands.put("CoralHold", new CoralHold(m_CoralBox));
+    namedCommands.put("TestEvent", new PrintCommand("TestEvent"));
+    namedCommands.put("ElevatorToL4", new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
+    namedCommands.put("ElevatorToL3", new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
+    namedCommands.put("ElevatorToL2", new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
+    namedCommands.put("ElevatorToL1", new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
+    namedCommands.put("ElevatorToBase", new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator));
+    namedCommands.put("CoralOut", new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed()));
+
+    //Command CoralHold = new CoralHold(m_CoralBox);
+    //Command ElevatorToBase = new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator);
+    //Command ElevatorToL3 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator);
+    //Command ElevatorToL2 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator);
+    //Command ElevatorToL4 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator);
+    //Command CoralOut = new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed());
   
     //auto named commands
-    NamedCommands.registerCommand("CoralHold", CoralHold);
-    NamedCommands.registerCommand("TestEvent", new PrintCommand("TestEvent"));
-    NamedCommands.registerCommand("ElevatorToL4", ElevatorToL4);
-    NamedCommands.registerCommand("ElevatorToL3", ElevatorToL3);
-    NamedCommands.registerCommand("ElevatorToL2", ElevatorToL2);
-    NamedCommands.registerCommand("ElevatorToBase",ElevatorToBase);
-    NamedCommands.registerCommand("ElevatorToL1", ElevatorToL1);
-    NamedCommands.registerCommand("CoralOut",autonamousCoralOut);
+    //NamedCommands.registerCommand("CoralHold", CoralHold);
+    //NamedCommands.registerCommand("TestEvent", new PrintCommand("TestEvent"));
+    //NamedCommands.registerCommand("ElevatorToL4", ElevatorToL4);
+    //NamedCommands.registerCommand("ElevatorToL3", ElevatorToL3);
+    //NamedCommands.registerCommand("ElevatorToL2", ElevatorToL2);
+    //NamedCommands.registerCommand("ElevatorToBase",ElevatorToBase);
+    //NamedCommands.registerCommand("CoralOut",CoralOut);
+
+    NamedCommands.registerCommands(namedCommands);
 
       autoChooser = new SendableChooser<>();
       autoChooser.addOption("GoofyAuto", "GoofyAuto");
@@ -164,12 +177,12 @@ public class RobotContainer {
     tab.addDouble("YPos", () -> m_robotDrive.getPose().getY());
     tab.addDouble("robot angle", ()->m_robotDrive.getHeading());
     tab.addBoolean("limitSwitch pressed", ()->m_elevator.isLimitSwitchPressed());
-    tab.add("Elevator to Base", ElevatorToBase);
-    tab.add("Elevator to L2", ElevatorToL2);
-    tab.add("Elevator to L3", ElevatorToL3);
-    tab.add("Elevator to L4", ElevatorToL4);
-    tab.add(CoralOut);
-    tab.add(CoralHold);
+    //tab.add("Elevator to Base", ElevatorToBase);
+    //tab.add("Elevator to L2", ElevatorToL2);
+    //tab.add("Elevator to L3", ElevatorToL3);
+    //tab.add("Elevator to L4", ElevatorToL4);
+    //tab.add(CoralOut);
+    //tab.add(CoralHold);
     tab.addDouble("algae arm cuurent", ()->m_AlgaeArm.getCurrent());
     tab.add(autoChooser);
     SmartDashboard.putData(autoChooser);
