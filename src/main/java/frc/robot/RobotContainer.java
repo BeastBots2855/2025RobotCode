@@ -30,7 +30,9 @@ import frc.robot.Constants.OIConstants;
 
 import frc.robot.utilities.RGBColor;
 import frc.robot.commands.LEDCommands.RAINBOWS;
+import frc.robot.commands.algaearm.AlgaeDown;
 import frc.robot.commands.algaearm.AutoDeploy;
+import frc.robot.commands.algaearm.GoToSetpoint;
 import frc.robot.commands.algaearm.MoveArm;
 import frc.robot.commands.coralbox.CoralHold;
 import frc.robot.commands.coralbox.CoralJuggle;
@@ -120,6 +122,7 @@ public class RobotContainer {
     Command ElevatorToL4 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator);
     Command CoralOut = new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed());
     Command autonamousCoralOut = new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed(), true); 
+  
     //auto named commands
     NamedCommands.registerCommand("CoralHold", CoralHold);
     NamedCommands.registerCommand("TestEvent", new PrintCommand("TestEvent"));
@@ -226,6 +229,8 @@ public class RobotContainer {
   m_robotDrive));
       
       new Trigger(()->m_elevator.isLimitSwitchPressed() == true).onTrue(new WaitCommand(.1).andThen(new InstantCommand(()->m_elevator.resetEncoders())));
+      new Trigger(()->m_elevator.getPos() > 4.0).onTrue(new GoToSetpoint(m_AlgaeArm));
+      new Trigger(()-> m_elevator.getPos() < 4.0).onTrue(new AlgaeDown(m_AlgaeArm));
       
       new Trigger(()->Math.abs(m_fightstick.getLeftY()) > .5).whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
       new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1).whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
