@@ -173,6 +173,7 @@ public class RobotContainer {
     tab.addDouble("algae arm cuurent", ()->m_AlgaeArm.getCurrent());
     tab.add(autoChooser);
     SmartDashboard.putData(autoChooser);
+    tab.addDouble("elevator cuurent", ()->m_elevator.getCurrent());
     
     //m_ledString.setColor(Constants.Colors.yellow);
 
@@ -229,7 +230,7 @@ public class RobotContainer {
   m_robotDrive));
       
       new Trigger(()->m_elevator.isLimitSwitchPressed() == true).onTrue(new WaitCommand(.1).andThen(new InstantCommand(()->m_elevator.resetEncoders())));
-      new Trigger(()->m_elevator.getPos() > 4.0).onTrue(new GoToSetpoint(m_AlgaeArm));
+      new Trigger(()->m_elevator.getPos() > 4.0).onTrue(new AutoDeploy(m_AlgaeArm, ()->m_CoralBox.getDistance() > 4.0));
       new Trigger(()-> m_elevator.getPos() < 4.0).onTrue(new AlgaeDown(m_AlgaeArm));
       
       new Trigger(()->Math.abs(m_fightstick.getLeftY()) > .5).whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
@@ -254,8 +255,7 @@ public class RobotContainer {
     m_operatorController.axisGreaterThan(2, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getLeftTriggerAxis() * -1));
     m_fightstick.axisGreaterThan(2, 0.5).whileTrue(new CoralJuggle(m_CoralBox, ()->m_fightstick.getLeftTriggerAxis()));
     m_fightstick.axisGreaterThan(3, 0.5).whileTrue(new CoralOut(m_CoralBox, ()->m_fightstick.getRightTriggerAxis() * -0.5));
-    m_fightstick.axisGreaterThan(3, 0.5).whileTrue(new AutoDeploy(m_AlgaeArm, ()->m_CoralBox.getDistance() > 145));
-    m_operatorController.axisGreaterThan(3, 0.5).whileTrue(new AutoDeploy(m_AlgaeArm, ()->m_CoralBox.getDistance() > 145));
+    
   
 
     //m_operatorController.button(2).onTrue(new CalibrateElevator(m_elevator));
@@ -348,6 +348,8 @@ public class RobotContainer {
     public LED getLED(){
         return m_ledString;
     }
+
+   
 
     // public LED getLEDRight(){
     //     return m_ledStringRight;

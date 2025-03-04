@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.Colors;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Elevator;
 import frc.robot.utilities.RGBColor;
 
 /**
@@ -21,6 +22,7 @@ import frc.robot.utilities.RGBColor;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private DriveSubsystem m_driveTrain;
+  private Elevator m_elevator;
 
   private RobotContainer m_robotContainer;
 
@@ -95,6 +97,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.getElevator().setSetpoint(0.0);
   }
 
   /** This function is called periodically during operator control. */

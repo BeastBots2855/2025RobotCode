@@ -269,6 +269,10 @@ public class Elevator extends SubsystemBase {
     return currDesiredSetpoint;
   }
 
+  public double getCurrent(){
+    return m_left.getSupplyCurrent().getValueAsDouble();
+  }
+
 
 
   @Override
