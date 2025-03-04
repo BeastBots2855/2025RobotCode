@@ -305,7 +305,7 @@ public class Elevator extends SubsystemBase {
    * @return if the elevator is within half a rotation of the setpoint
    */
   public boolean isAtSetpoint(){
-    System.out.println("is at setpoint" + (getTargetPos() - getPos()));
+    //System.out.println("is at setpoint " + (getTargetPos() - getPos()));
    return((Math.abs(getTargetPos() - getPos())) < 1);
 
   }

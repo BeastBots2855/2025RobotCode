@@ -46,7 +46,6 @@ public class ElevatorToSetpoint extends Command {
   @Override
   public boolean isFinished() {
     System.out.println("is finished");
-    return m_elevator.isAtSetpoint();
-    
+    return (Math.abs(m_elevator.getTargetPos() - m_elevator.getPos()) < 1);
   }
 }

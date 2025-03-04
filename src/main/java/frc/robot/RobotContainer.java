@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -20,11 +21,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
+
 import frc.robot.utilities.RGBColor;
 import frc.robot.commands.LEDCommands.RAINBOWS;
 import frc.robot.commands.algaearm.AutoDeploy;
@@ -43,6 +46,7 @@ import frc.robot.subsystems.LED;
 import frc.robot.utilities.RGBColor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -91,6 +95,7 @@ public class RobotContainer {
   private final CoralBox m_CoralBox = new CoralBox(m_boxMotor);
   private final LED m_ledString = new LED(0);
   private final AlgaeArm m_AlgaeArm = new AlgaeArm(m_AlgaeArmMotor);
+  private SendableChooser<String> autoChooser;
 //   private final LED m_ledStringRight = new LED(1);
 
   
@@ -98,6 +103,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    
     //start logging
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());  //logs joystick and button inputs
@@ -130,6 +137,8 @@ public class RobotContainer {
 
     NamedCommands.registerCommands(namedCommands);
 
+      autoChooser = new SendableChooser<>();
+      autoChooser.addOption("GoofyAuto", "GoofyAuto");
     // Configure the button bindings
     configureButtonBindings();
 
@@ -166,11 +175,16 @@ public class RobotContainer {
     //tab.add(CoralOut);
     //tab.add(CoralHold);
     tab.addDouble("algae arm cuurent", ()->m_AlgaeArm.getCurrent());
+    tab.add(autoChooser);
+    SmartDashboard.putData(autoChooser);
+    
     //m_ledString.setColor(Constants.Colors.yellow);
 
     //CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledString));
     // CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledStringRight));
     //m_ledString.setDefaultCommand(new RunCommand(()->m_ledString.setColor(255,100,0)));
+
+    
   }
 
   /**
@@ -271,7 +285,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new PathPlannerAuto("LeftSideAuto");
+    return new PathPlannerAuto(autoChooser.getSelected());
+   // return new PathPlannerAuto("GoofyAuto");
     // return AutoBuilder.buildAuto("TestAuto");
     // return new PathPlannerAuto("TestAuto");
     // return new PrintCommand("yeah");

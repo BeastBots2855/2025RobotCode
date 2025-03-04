@@ -16,11 +16,17 @@ public class CoralOut extends Command {
 
   private CoralBox m_CoralBox;
   private DoubleSupplier m_speed;
+  private boolean m_useSensor;
+
+  public CoralOut(CoralBox subsystem, DoubleSupplier speed){
+    this(subsystem, speed, false);
+  }
 
   /** Creates a new CoralOut. */
-  public CoralOut(CoralBox subsystem, DoubleSupplier speed) {
+  public CoralOut(CoralBox subsystem, DoubleSupplier speed, boolean useSensor) {
     m_CoralBox = subsystem;
     m_speed = speed;
+    m_useSensor = useSensor;
     addRequirements(subsystem);
     
   }
@@ -48,6 +54,6 @@ public class CoralOut extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_CoralBox.getDistance() > 145;
+    return m_useSensor && m_CoralBox.getDistance() > 145;
   }
 }
