@@ -162,6 +162,13 @@ public final class Constants {
     public static final RGBColor orange = new RGBColor(255, 50, 0);
   }
 
+  public static final class AlgaeArmConstants{
+    public static final double kP = 0.1;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double currentLimit = 10.0;
+  }
+
  
   
 
