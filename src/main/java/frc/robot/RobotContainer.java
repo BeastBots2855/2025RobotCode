@@ -35,6 +35,7 @@ import frc.robot.commands.algaearm.AlgaeDown;
 import frc.robot.commands.algaearm.AutoDeploy;
 import frc.robot.commands.algaearm.GoToSetpoint;
 import frc.robot.commands.algaearm.MoveArm;
+import frc.robot.commands.climber.Climb;
 import frc.robot.commands.coralbox.CoralHold;
 import frc.robot.commands.coralbox.CoralJuggle;
 import frc.robot.commands.coralbox.CoralOut;
@@ -42,7 +43,7 @@ import frc.robot.commands.elevator.CalibrateElevator;
 import frc.robot.commands.elevator.ElevatorToSetpoint;
 import frc.robot.commands.elevator.MoveElevator;
 import frc.robot.subsystems.AlgaeArm;
-import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralBox;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
@@ -104,7 +105,7 @@ public class RobotContainer {
   private final LED m_ledString = new LED(0);
   private final AlgaeArm m_AlgaeArm = new AlgaeArm(m_AlgaeArmMotor);
   private SendableChooser<String> autoChooser;
-  private final Climb m_Climb = new Climb(m_rightClimb, m_lefClimb);
+  private final Climber m_Climb = new Climber(m_rightClimb, m_lefClimb);
 //   private final LED m_ledStringRight = new LED(1);
 
   
@@ -214,14 +215,9 @@ public class RobotContainer {
             m_robotDrive));
 
     new JoystickButton(m_driverController, 3)
-        .whileTrue(new RunCommand(
-          () -> m_Climb.Spin(.25), m_Climb
-          ));        
+        .whileTrue(new Climb(() -> .25, m_Climb));        
      new JoystickButton(m_driverController, 2)
-        .whileTrue(new RunCommand(
-           () -> m_Climb.Spin(-.25), m_Climb
-            ));        
-
+        .whileTrue(new Climb(() -> -25, m_Climb));
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
     new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));

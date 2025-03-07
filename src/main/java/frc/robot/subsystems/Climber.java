@@ -8,16 +8,16 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Climb extends SubsystemBase {
+public class Climber extends SubsystemBase {
   private final SparkMax m_right;
   private final SparkMax m_left; 
   /** Creates a new Climb. */
-  public Climb(SparkMax right, SparkMax left) {
+  public Climber(SparkMax right, SparkMax left) {
     m_right = right;
     m_left = left;
   }
 
-  public void Spin(double speed){
+  public void spin(double speed){
     m_right.set(-speed);
     m_left.set(speed);
   }
