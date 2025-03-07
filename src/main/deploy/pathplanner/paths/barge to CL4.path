@@ -58,6 +58,12 @@
   ],
   "eventMarkers": [
     {
+      "name": "",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "run box",
       "waypointRelativePos": 0.17288135593220377,
       "endWaypointRelativePos": null,

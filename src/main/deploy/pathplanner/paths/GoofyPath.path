@@ -29,21 +29,48 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 0.1,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "",
-      "waypointRelativePos": 0.0915254237288135,
+      "name": "Do whatever the fuck",
+      "waypointRelativePos": 0.25084745762711874,
       "endWaypointRelativePos": null,
       "command": {
         "type": "sequential",
         "data": {
           "commands": [
             {
-              "type": "named",
+              "type": "deadline",
               "data": {
-                "name": "ElevatorToL4"
+                "commands": [
+                  {
+                    "type": "wait",
+                    "data": {
+                      "waitTime": 2.0
+                    }
+                  },
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "ElevatorToL4"
+                    }
+                  }
+                ]
               }
             },
             {

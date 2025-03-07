@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.AlgaeArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorPIDSetpoints;
@@ -103,7 +104,7 @@ public class RobotContainer {
   private final LED m_ledString = new LED(0);
   private final AlgaeArm m_AlgaeArm = new AlgaeArm(m_AlgaeArmMotor);
   private SendableChooser<String> autoChooser;
-  private final Climb m_Climb = new Climb(m_boxMotor, m_AlgaeArmMotor);
+  private final Climb m_Climb = new Climb(m_rightClimb, m_lefClimb);
 //   private final LED m_ledStringRight = new LED(1);
 
   
@@ -240,14 +241,22 @@ public class RobotContainer {
       -MathUtil.applyDeadband(m_driverController.getLeftX() * .25, OIConstants.kDriveDeadband),
       -MathUtil.applyDeadband(m_driverController.getRightX() * .25, OIConstants.kDriveDeadband),
       true),
-  m_robotDrive));
+      m_robotDrive));
       
-      new Trigger(()->m_elevator.isLimitSwitchPressed() == true).onTrue(new WaitCommand(.1).andThen(new InstantCommand(()->m_elevator.resetEncoders())));
-      new Trigger(()->m_elevator.getPos() > 4.0).onTrue(new AutoDeploy(m_AlgaeArm, ()->m_CoralBox.getDistance() > 4.0));
+      new Trigger(
+        ()->m_elevator.isLimitSwitchPressed() == true)
+          .onTrue(new WaitCommand(.1)
+          .andThen(new InstantCommand(()->m_elevator.resetEncoders())));
+      new Trigger(()->m_elevator.getPos() > 4.0)
+        .onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp));
       new Trigger(()-> m_elevator.getPos() < 4.0).onTrue(new AlgaeDown(m_AlgaeArm));
       
-      new Trigger(()->Math.abs(m_fightstick.getLeftY()) > .5).whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
-      new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1).whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
+      new Trigger(()->Math.abs(m_fightstick.getLeftY()) > .5)
+        .whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
+      new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1)
+        .whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
+      new Trigger(()->m_AlgaeArm.getCurrent() > AlgaeArmConstants.currentLimit)
+        .onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
     
     /**
      * slows drive to 10% when elevator is above L2
@@ -294,8 +303,9 @@ public class RobotContainer {
     m_fightstick.button(10).onTrue(new InstantCommand(()->m_elevator.resetEncoders()));
     //fightstick intake to lightsensor button 6
     m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));
-    new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroHeading()
-    ));//new RunCommand(()->m_robotDrive.zeroHeading()));
+    new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroHeading()));
+    m_fightstick.button(8).onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
+    //new RunCommand(()->m_robotDrive.zeroHeading()));
 
   }
 

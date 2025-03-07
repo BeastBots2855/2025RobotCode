@@ -14,7 +14,9 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AlgaeArmConstants;
 
 
 
@@ -24,6 +26,7 @@ public class AlgaeArm extends SubsystemBase {
   private final RelativeEncoder m_RelativeEncoder;
   private double targetSetpoint;
   private SparkMaxConfig m_AlgaeMotorConfig;
+  private PIDController m_PIDController;
 
   
 
@@ -33,6 +36,7 @@ public class AlgaeArm extends SubsystemBase {
     m_AlgaeMotorConfig = new SparkMaxConfig();
     m_AlgaeMotorConfig.inverted(true);
     m_AlgaeArmMotor.configure(m_AlgaeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_PIDController = new PIDController(AlgaeArmConstants.kP, AlgaeArmConstants.kI, AlgaeArmConstants.kD);
    
    
   }
@@ -61,11 +65,15 @@ public class AlgaeArm extends SubsystemBase {
  public double getPos(){
   return m_RelativeEncoder.getPosition();
  }
+
+ public void resetPosition(){
+  m_RelativeEncoder.setPosition(0.0);
+ }
   
 
   @Override
   public void periodic() {
-
+   m_AlgaeArmMotor.set(m_PIDController.calculate(getPos(), targetSetpoint));
     // This method will be called once per scheduler run
   }
 }

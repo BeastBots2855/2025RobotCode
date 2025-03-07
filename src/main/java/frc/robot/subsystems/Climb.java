@@ -18,7 +18,7 @@ public class Climb extends SubsystemBase {
   }
 
   public void Spin(double speed){
-    m_right.set(speed);
+    m_right.set(-speed);
     m_left.set(speed);
   }
 

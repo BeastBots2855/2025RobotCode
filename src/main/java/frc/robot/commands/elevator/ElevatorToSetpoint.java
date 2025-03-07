@@ -21,7 +21,7 @@ public class ElevatorToSetpoint extends Command {
     this.setpoint = setpoint;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
-    setName(getName() + setpoint);  //so multiple instances can be distinguished
+    setName(getName() + " " + setpoint);  //so multiple instances can be distinguished
   }
 
   // Called when the command is initially scheduled.
@@ -45,7 +45,8 @@ public class ElevatorToSetpoint extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    System.out.println("is finished");
-    return (Math.abs(m_elevator.getTargetPos() - m_elevator.getPos()) < 1);
+    boolean finished = (Math.abs(m_elevator.getTargetPos() - m_elevator.getPos()) < 1);
+    DataLogManager.log("at setpoint: " + finished);
+    return finished;
   }
 }
