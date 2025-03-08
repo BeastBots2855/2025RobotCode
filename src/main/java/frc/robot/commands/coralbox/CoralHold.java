@@ -28,22 +28,22 @@ public class CoralHold extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(!(m_CoralBox.getDistance() < 145)){
       m_CoralBox.spin(.6);
-    }else{
-    m_CoralBox.spin(0);
-    }
+    
+    
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    DataLogManager.log(interrupted ? "interrupt cmd: " + getName() : "end cmd: " + getName());
+    m_CoralBox.spin(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    boolean coralboxIsFinished = (m_CoralBox.getDistance() < 145);
+    return coralboxIsFinished;
   }
 }

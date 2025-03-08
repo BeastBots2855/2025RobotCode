@@ -102,9 +102,9 @@ public class Elevator extends SubsystemBase {
     // Motion Magic provides smooth motion profiling.
     // --------------------------------------------------------------------------
     var leftMotionMagicConfigs = leftTalonConfiguration.MotionMagic;
-    leftMotionMagicConfigs.MotionMagicCruiseVelocity = 50; // Cruise velocity in rps
-    leftMotionMagicConfigs.MotionMagicAcceleration = 100;    // Acceleration in rps/s
-    leftMotionMagicConfigs.MotionMagicJerk = 1600;           // Jerk in rps/s/s
+    leftMotionMagicConfigs.MotionMagicCruiseVelocity = 40; // Cruise velocity in rps
+    leftMotionMagicConfigs.MotionMagicAcceleration = 60;    // Acceleration in rps/s
+    leftMotionMagicConfigs.MotionMagicJerk = 800;           // Jerk in rps/s/s
 
     // --------------------------------------------------------------------------
     // Configure slot 0 parameters for the right elevator motor (same as left).
@@ -123,9 +123,9 @@ public class Elevator extends SubsystemBase {
     // Configure Motion Magic parameters for the right elevator motor.
     // --------------------------------------------------------------------------
     var rightMotionMagicConfigs = rightTalonConfiguration.MotionMagic;
-    rightMotionMagicConfigs.MotionMagicCruiseVelocity = 50; //64, 10, 50
-    rightMotionMagicConfigs.MotionMagicAcceleration = 100; //640, 30, 100
-    rightMotionMagicConfigs.MotionMagicJerk = 1600; //1600
+    rightMotionMagicConfigs.MotionMagicCruiseVelocity = 40; //64, 10, 50
+    rightMotionMagicConfigs.MotionMagicAcceleration = 60; //640, 30, 100
+    rightMotionMagicConfigs.MotionMagicJerk = 800; //1600
 
     // --------------------------------------------------------------------------
     // Set the motor output inversion so that the motor rotates in the proper direction.

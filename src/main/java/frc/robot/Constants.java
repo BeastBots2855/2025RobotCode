@@ -143,7 +143,7 @@ public final class Constants {
 }
 
   public static final class ElevatorPIDSetpoints{
-    public static final double Base = .45;
+    public static final double Base = .7;
     public static final double L1 = 4.0;
     public static final double L2 = 6.47; //5.47
     public static final double L3 = 13.7; //12.28

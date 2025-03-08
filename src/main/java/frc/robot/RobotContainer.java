@@ -150,6 +150,7 @@ public class RobotContainer {
 
       autoChooser = new SendableChooser<>();
       autoChooser.addOption("GoofyAuto", "GoofyAuto");
+      autoChooser.addOption("3PieceChickenDinner", "3PieceChickenDinner");
     // Configure the button bindings
     configureButtonBindings();
 
@@ -214,8 +215,8 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    new Trigger(()->m_driverController.getRightTriggerAxis() > 0.05).whileTrue(new Climb(() -> m_driverController.getRightTriggerAxis(), m_Climb));
-    new Trigger(()->m_driverController.getLeftTriggerAxis() > 0.05).whileTrue(new Climb(() -> m_driverController.getLeftTriggerAxis(), m_Climb));         
+    new Trigger(()->m_driverController.getRightTriggerAxis() > 0.05).whileTrue(new Climb(() -> m_driverController.getRightTriggerAxis() * 0.2, m_Climb));
+    new Trigger(()->m_driverController.getLeftTriggerAxis() > 0.05).whileTrue(new Climb(() -> -m_driverController.getLeftTriggerAxis() * 0.2, m_Climb));         
 
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
@@ -257,7 +258,7 @@ public class RobotContainer {
      * slows drive to 10% when elevator is above L2
      */
     
-      new Trigger(()->m_elevator.getPos() > ElevatorPIDSetpoints.L2).whileTrue(new RunCommand(
+      new Trigger(()->m_elevator.getPos() > ElevatorPIDSetpoints.L2 && DriverStation.isTeleop()).whileTrue(new RunCommand(
         () -> m_robotDrive.drive(
             -MathUtil.applyDeadband(m_driverController.getLeftY() * .1, OIConstants.kDriveDeadband),
             -MathUtil.applyDeadband(m_driverController.getLeftX() * .1, OIConstants.kDriveDeadband),
@@ -294,7 +295,7 @@ public class RobotContainer {
     m_fightstick.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
     m_fightstick.button(5).onTrue(new CoralOut(m_CoralBox, ()-> 0.5));
     m_fightstick.button(
-      3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator).andThen(new RunCommand(()->m_elevator.PIDOff())));
+      3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator).andThen(new WaitCommand(0.5)).andThen(new InstantCommand(()->m_elevator.PIDOff())));
     m_fightstick.button(10).onTrue(new InstantCommand(()->m_elevator.resetEncoders()));
     //fightstick intake to lightsensor button 6
     m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));

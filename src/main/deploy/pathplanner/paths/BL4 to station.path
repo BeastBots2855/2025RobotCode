@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.712928082191781,
-        "y": 7.368214897260274
+        "x": 3.681292808219178,
+        "y": 5.0392337328767125
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.167070645322562,
-        "y": 5.121534692033517
+        "x": 3.1201568469039875,
+        "y": 6.092073220885128
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.696318493150685,
-        "y": 5.069285102739726
+        "x": 1.6528253424657535,
+        "y": 7.353189212328767
       },
       "prevControl": {
-        "x": 2.880326260595763,
-        "y": 6.168234277554055
+        "x": 3.962459478873307,
+        "y": 4.540190950369643
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,11 +32,24 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.867796610169491,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.10169491525423731,
       "constraints": {
         "maxVelocity": 3.0,
         "maxAcceleration": 0.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone 2",
+      "minWaypointRelativePos": 0.97,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 0.3,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -47,37 +60,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ElevatorToL4",
-      "waypointRelativePos": 0.813559322033899,
+      "name": "ElevatorToBase",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "ElevatorToL4"
-        }
-      }
-    },
-    {
-      "name": "CoralOut",
-      "waypointRelativePos": 0.9694915254237289,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "deadline",
-        "data": {
-          "commands": [
-            {
-              "type": "wait",
-              "data": {
-                "waitTime": 2.0
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "CoralOut"
-              }
-            }
-          ]
+          "name": "ElevatorToBase"
         }
       }
     }
@@ -92,13 +81,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -61.2940474565989
+    "rotation": 129.17365797044422
   },
   "reversed": false,
   "folder": "left paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 127.87498365109822
+    "rotation": -59.34933204294716
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
