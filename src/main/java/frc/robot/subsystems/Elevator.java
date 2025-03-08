@@ -103,7 +103,7 @@ public class Elevator extends SubsystemBase {
     // --------------------------------------------------------------------------
     var leftMotionMagicConfigs = leftTalonConfiguration.MotionMagic;
     leftMotionMagicConfigs.MotionMagicCruiseVelocity = 50; // Cruise velocity in rps
-    leftMotionMagicConfigs.MotionMagicAcceleration = 200;    // Acceleration in rps/s
+    leftMotionMagicConfigs.MotionMagicAcceleration = 100;    // Acceleration in rps/s
     leftMotionMagicConfigs.MotionMagicJerk = 1600;           // Jerk in rps/s/s
 
     // --------------------------------------------------------------------------
@@ -124,7 +124,7 @@ public class Elevator extends SubsystemBase {
     // --------------------------------------------------------------------------
     var rightMotionMagicConfigs = rightTalonConfiguration.MotionMagic;
     rightMotionMagicConfigs.MotionMagicCruiseVelocity = 50; //64, 10, 50
-    rightMotionMagicConfigs.MotionMagicAcceleration = 200; //640, 30, 100
+    rightMotionMagicConfigs.MotionMagicAcceleration = 100; //640, 30, 100
     rightMotionMagicConfigs.MotionMagicJerk = 1600; //1600
 
     // --------------------------------------------------------------------------
