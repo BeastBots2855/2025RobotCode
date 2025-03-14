@@ -4,6 +4,7 @@
 
 package frc.robot.commands.elevator;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
 
@@ -19,7 +20,10 @@ public class CalibrateElevator extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_elevator.PIDOff();
+    DataLogManager.log("start cmd: " + getName());
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -32,6 +36,7 @@ public class CalibrateElevator extends Command {
   public void end(boolean interrupted) {
     m_elevator.stop();
     m_elevator.resetEncoders();
+    DataLogManager.log(interrupted ? "interrupt cmd: " + getName() : "end cmd: " + getName());
   }
 
   // Returns true when the command should end.

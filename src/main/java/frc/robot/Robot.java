@@ -5,8 +5,13 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.Colors;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Elevator;
+import frc.robot.utilities.RGBColor;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private DriveSubsystem m_driveTrain;
+  private Elevator m_elevator;
 
   private RobotContainer m_robotContainer;
 
@@ -29,6 +36,11 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_robotContainer.getElevator().resetEncoders();
+    m_robotContainer.getLED().setColor(Colors.yellow);
+    SmartDashboard.putData(CommandScheduler.getInstance());
+    
+    
+    
   }
 
   /**
@@ -85,6 +97,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.getElevator().setSetpoint(0.0);
   }
 
   /** This function is called periodically during operator control. */

@@ -13,34 +13,65 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.AlgaeArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
+
+import frc.robot.utilities.RGBColor;
+import frc.robot.commands.LEDCommands.RAINBOWS;
+import frc.robot.commands.algaearm.AlgaeDown;
+import frc.robot.commands.algaearm.AutoDeploy;
+import frc.robot.commands.algaearm.GoToSetpoint;
+import frc.robot.commands.algaearm.MoveArm;
+import frc.robot.commands.climber.Climb;
+import frc.robot.commands.coralbox.CoralHold;
+import frc.robot.commands.coralbox.CoralJuggle;
 import frc.robot.commands.coralbox.CoralOut;
 import frc.robot.commands.elevator.CalibrateElevator;
 import frc.robot.commands.elevator.ElevatorToSetpoint;
 import frc.robot.commands.elevator.MoveElevator;
+import frc.robot.subsystems.AlgaeArm;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralBox;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LED;
+import frc.robot.utilities.RGBColor;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+//import LEDS
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -55,21 +86,71 @@ public class RobotContainer {
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
-  XboxController m_fightstick = new XboxController(OIConstants.kFightStickPort);
+  CommandXboxController m_fightstick = new CommandXboxController(OIConstants.kFightStickPort);
   ShuffleboardTab tab = Shuffleboard.getTab("main tab");
+
+  private final Map<String, Command> namedCommands;
+
+
+  private final SparkMax m_rightClimb = new SparkMax(41, MotorType.kBrushless);
+  private final SparkMax m_lefClimb = new SparkMax(42, MotorType.kBrushless);
   
   private final TalonFXS m_left = new TalonFXS(20);
   private final TalonFXS m_right = new TalonFXS(21);
   private final DigitalInput m_elevatorLimitSwitch = new DigitalInput(0);
   private final Elevator m_elevator = new Elevator(m_left, m_right, m_elevatorLimitSwitch);
   private final SparkMax m_boxMotor = new SparkMax(10, MotorType.kBrushless);
+  private final SparkMax m_AlgaeArmMotor = new SparkMax(11, MotorType.kBrushless);
   private final CoralBox m_CoralBox = new CoralBox(m_boxMotor);
+  private final LED m_ledString = new LED(0);
+  private final AlgaeArm m_AlgaeArm = new AlgaeArm(m_AlgaeArmMotor);
+  private SendableChooser<String> autoChooser;
+  private final Climber m_Climb = new Climber(m_rightClimb, m_lefClimb);
+//   private final LED m_ledStringRight = new LED(1);
 
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    
+    //start logging
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());  //logs joystick and button inputs
+    DataLogManager.log("Log started");
+
+    namedCommands = new HashMap<>();
+    namedCommands.put("CoralHold", new CoralHold(m_CoralBox));
+    namedCommands.put("TestEvent", new PrintCommand("TestEvent"));
+    namedCommands.put("ElevatorToL4", new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
+    namedCommands.put("ElevatorToL3", new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
+    namedCommands.put("ElevatorToL2", new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
+    namedCommands.put("ElevatorToL1", new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
+    namedCommands.put("ElevatorToBase", new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator));
+    namedCommands.put("CoralOut", new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed()));
+
+    //Command CoralHold = new CoralHold(m_CoralBox);
+    //Command ElevatorToBase = new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator);
+    //Command ElevatorToL3 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator);
+    //Command ElevatorToL2 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator);
+    //Command ElevatorToL4 = new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator);
+    //Command CoralOut = new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed());
+  
+    //auto named commands
+    //NamedCommands.registerCommand("CoralHold", CoralHold);
+    //NamedCommands.registerCommand("TestEvent", new PrintCommand("TestEvent"));
+    //NamedCommands.registerCommand("ElevatorToL4", ElevatorToL4);
+    //NamedCommands.registerCommand("ElevatorToL3", ElevatorToL3);
+    //NamedCommands.registerCommand("ElevatorToL2", ElevatorToL2);
+    //NamedCommands.registerCommand("ElevatorToBase",ElevatorToBase);
+    //NamedCommands.registerCommand("CoralOut",CoralOut);
+
+    NamedCommands.registerCommands(namedCommands);
+
+      autoChooser = new SendableChooser<>();
+      autoChooser.addOption("GoofyAuto", "GoofyAuto");
+      autoChooser.addOption("3PieceChickenDinner", "3PieceChickenDinner");
     // Configure the button bindings
     configureButtonBindings();
 
@@ -84,6 +165,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
+    
 
 
 
@@ -92,6 +174,30 @@ public class RobotContainer {
     tab.addDouble("elevator position", ()->m_elevator.getPos());
     tab.addDouble ("elevator output(left)", ()->m_elevator.getOutput());
     tab.addDouble("elevator Setpoint", ()->m_elevator.getTargetPos());
+    tab.addDouble("distance sensor", ()->m_CoralBox.getDistance());
+    SmartDashboard.putData(m_robotDrive);
+    tab.addDouble("XPos", () -> m_robotDrive.getPose().getX());
+    tab.addDouble("YPos", () -> m_robotDrive.getPose().getY());
+    tab.addDouble("robot angle", ()->m_robotDrive.getHeading());
+    tab.addBoolean("limitSwitch pressed", ()->m_elevator.isLimitSwitchPressed());
+    //tab.add("Elevator to Base", ElevatorToBase);
+    //tab.add("Elevator to L2", ElevatorToL2);
+    //tab.add("Elevator to L3", ElevatorToL3);
+    //tab.add("Elevator to L4", ElevatorToL4);
+    //tab.add(CoralOut);
+    //tab.add(CoralHold);
+    tab.addDouble("algae arm cuurent", ()->m_AlgaeArm.getCurrent());
+    tab.add(autoChooser);
+    SmartDashboard.putData(autoChooser);
+    tab.addDouble("elevator cuurent", ()->m_elevator.getCurrent());
+    
+    //m_ledString.setColor(Constants.Colors.yellow);
+
+    //CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledString));
+    // CommandScheduler.getInstance().schedule(new RAINBOWS(m_ledStringRight));
+    //m_ledString.setDefaultCommand(new RunCommand(()->m_ledString.setColor(255,100,0)));
+
+    
   }
 
   /**
@@ -109,12 +215,66 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
+    new Trigger(()->m_driverController.getRightTriggerAxis() > 0.05).whileTrue(new Climb(() -> m_driverController.getRightTriggerAxis() * 0.2, m_Climb));
+    new Trigger(()->m_driverController.getLeftTriggerAxis() > 0.05).whileTrue(new Climb(() -> -m_driverController.getLeftTriggerAxis() * 0.2, m_Climb));         
+
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
     new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
+   
+   /**
+    * driver can slow robot to 25% output by pressing either trigger
+    */
+    new Trigger(()->m_driverController.getRightTriggerAxis() > .3).whileTrue(new RunCommand(
+      () -> m_robotDrive.drive(
+          -MathUtil.applyDeadband(m_driverController.getLeftY() * .25, OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(m_driverController.getLeftX() * .25, OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(m_driverController.getRightX() * .25, OIConstants.kDriveDeadband),
+          true),
+      m_robotDrive));
+    new Trigger(()->m_driverController.getLeftTriggerAxis() > .3).whileTrue(new RunCommand(() -> m_robotDrive.drive(
+      -MathUtil.applyDeadband(m_driverController.getLeftY() * .25, OIConstants.kDriveDeadband),
+      -MathUtil.applyDeadband(m_driverController.getLeftX() * .25, OIConstants.kDriveDeadband),
+      -MathUtil.applyDeadband(m_driverController.getRightX() * .25, OIConstants.kDriveDeadband),
+      true),
+      m_robotDrive));
+      
+      new Trigger(
+        ()->m_elevator.isLimitSwitchPressed() == true)
+          .onTrue(new WaitCommand(.1)
+          .andThen(new InstantCommand(()->m_elevator.resetEncoders())));
+      new Trigger(()->m_elevator.getPos() > 4.0)
+        .onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp));
+      new Trigger(()-> m_elevator.getPos() < 4.0).onTrue(new AlgaeDown(m_AlgaeArm));
+      
+      new Trigger(()->Math.abs(m_fightstick.getLeftY()) > .5)
+        .whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
+      new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1)
+        .whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
+      new Trigger(()->m_AlgaeArm.getCurrent() > AlgaeArmConstants.currentLimit)
+        .onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
+    
+    /**
+     * slows drive to 10% when elevator is above L2
+     */
+    
+      new Trigger(()->m_elevator.getPos() > ElevatorPIDSetpoints.L2 && DriverStation.isTeleop()).whileTrue(new RunCommand(
+        () -> m_robotDrive.drive(
+            -MathUtil.applyDeadband(m_driverController.getLeftY() * .1, OIConstants.kDriveDeadband),
+            -MathUtil.applyDeadband(m_driverController.getLeftX() * .1, OIConstants.kDriveDeadband),
+            -MathUtil.applyDeadband(m_driverController.getRightX() * .1, OIConstants.kDriveDeadband),
+            true),
+        m_robotDrive));
+
+
+
     
     m_operatorController.axisGreaterThan(3, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getRightTriggerAxis()));
     m_operatorController.axisGreaterThan(2, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getLeftTriggerAxis() * -1));
+    m_fightstick.axisGreaterThan(2, 0.5).whileTrue(new CoralJuggle(m_CoralBox, ()->m_fightstick.getLeftTriggerAxis()));
+    m_fightstick.axisGreaterThan(3, 0.5).whileTrue(new CoralOut(m_CoralBox, ()->m_fightstick.getRightTriggerAxis() * -0.5));
+    
+  
 
     //m_operatorController.button(2).onTrue(new CalibrateElevator(m_elevator));
     
@@ -129,8 +289,19 @@ public class RobotContainer {
     m_operatorController.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
     m_operatorController.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
     m_operatorController.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
-
-
+    m_fightstick.button(9).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
+    m_fightstick.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
+    m_fightstick.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
+    m_fightstick.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
+    m_fightstick.button(5).onTrue(new CoralOut(m_CoralBox, ()-> 0.5));
+    m_fightstick.button(
+      3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator).andThen(new WaitCommand(0.5)).andThen(new InstantCommand(()->m_elevator.PIDOff())));
+    m_fightstick.button(10).onTrue(new InstantCommand(()->m_elevator.resetEncoders()));
+    //fightstick intake to lightsensor button 6
+    m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));
+    new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroHeading()));
+    m_fightstick.button(8).onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
+    //new RunCommand(()->m_robotDrive.zeroHeading()));
 
   }
 
@@ -140,44 +311,51 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return new PathPlannerAuto(autoChooser.getSelected());
+   // return new PathPlannerAuto("GoofyAuto");
+    // return AutoBuilder.buildAuto("TestAuto");
+    // return new PathPlannerAuto("TestAuto");
+    // return new PrintCommand("yeah");
     // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
+    // TrajectoryConfig config = new TrajectoryConfig(
+    //     AutoConstants.kMaxSpeedMetersPerSecond,
+    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+    //     // Add kinematics to ensure max speed is actually obeyed
+    //     .setKinematics(DriveConstants.kDriveKinematics);
 
-    // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        config);
+    // // An example trajectory to follow. All units in meters.
+    // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+    //     new Pose2d(0, 0, new Rotation2d(0)),
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+    //     // End 3 meters straight ahead of where we started, facing forward
+    //     new Pose2d(3, 0, new Rotation2d(0)),
+    //     config);
 
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    // var thetaController = new ProfiledPIDController(
+    //     AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    // thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
+    // SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    //     exampleTrajectory,
+    //     m_robotDrive::getPose, // Functional interface to feed supplier
+    //     DriveConstants.kDriveKinematics,
 
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
+    //     // Position controllers
+    //     new PIDController(AutoConstants.kPXController, 0, 0),
+    //     new PIDController(AutoConstants.kPYController, 0, 0),
+    //     thetaController,
+    //     m_robotDrive::setModuleStates,
+    //     m_robotDrive);
 
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+    // // Reset odometry to the starting pose of the trajectory.
+    // m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    // // Run path following command, then stop at the end.
+    // return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+
+   
   }
 
 
@@ -185,4 +363,14 @@ public class RobotContainer {
     public Elevator getElevator(){
         return m_elevator;
     }
+
+    public LED getLED(){
+        return m_ledString;
+    }
+
+   
+
+    // public LED getLEDRight(){
+    //     return m_ledStringRight;
+    // }
 }

@@ -4,14 +4,77 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AlgaeArmConstants;
+
+
 
 public class AlgaeArm extends SubsystemBase {
   /** Creates a new AlgaeArm. */
-  public AlgaeArm() {}
+  private final SparkMax m_AlgaeArmMotor;
+  private final RelativeEncoder m_RelativeEncoder;
+  private double targetSetpoint;
+  private SparkMaxConfig m_AlgaeMotorConfig;
+  private PIDController m_PIDController;
+
+  
+
+  public AlgaeArm(SparkMax motor) {
+    m_AlgaeArmMotor = motor;
+    m_RelativeEncoder = m_AlgaeArmMotor.getEncoder();
+    m_AlgaeMotorConfig = new SparkMaxConfig();
+    m_AlgaeMotorConfig.inverted(true);
+    m_AlgaeArmMotor.configure(m_AlgaeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_PIDController = new PIDController(AlgaeArmConstants.kP, AlgaeArmConstants.kI, AlgaeArmConstants.kD);
+  }
+
+  public void move(Double speed){
+    speed *= .25;
+    m_AlgaeArmMotor.set(speed);
+  }
+
+  public void stop(){
+    m_AlgaeArmMotor.set(0);
+  }
+
+  public double getCurrent(){
+    return m_AlgaeArmMotor.getOutputCurrent();
+  }
+
+  public void setSetpoint(double setpoint){
+    targetSetpoint = setpoint;
+  }
+
+  public double getSetpoint(){
+    return targetSetpoint;
+  }
+
+  public double getPos(){
+    return m_RelativeEncoder.getPosition();
+  }
+
+  public void resetPosition(){
+    m_RelativeEncoder.setPosition(0.0);
+  }
+  
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    m_AlgaeArmMotor.set(m_PIDController.calculate(getPos(), targetSetpoint));
+
+    SmartDashboard.putNumber("Algae Encoder Pos", m_RelativeEncoder.getPosition());
+    SmartDashboard.putNumber("Algae Current", m_AlgaeArmMotor.getOutputCurrent());
   }
 }

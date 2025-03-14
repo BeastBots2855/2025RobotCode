@@ -4,10 +4,27 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.utilities.RGBColor;
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -28,10 +45,16 @@ public final class Constants {
     public static final double kMaxSpeedMetersPerSecond = 4.8;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
+
+    public static final double kDirectionSlewRate = 1.2; // radians per second
+    public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
+    public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
+
+
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    public static final double kTrackWidth = Units.inchesToMeters(26);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
+    public static final double kWheelBase = Units.inchesToMeters(26);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -97,14 +120,28 @@ public final class Constants {
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+
+    public static final PIDConstants kPIDDrive = new PIDConstants(3.2,0.0,0.2);
+    public static final PIDConstants kPIDRot = new PIDConstants(3.0, 0.0, 0.0);
+
+    public static final double kMassKg = 135/2.2;
+    //public static final ModuleConfig moduleconfig = new ModuleConfig(ModuleConstants.kWheelDiameterMeters/2, DriveConstants.kMaxSpeedMetersPerSecond, 1, , 60.0, 0);
+
+  //   public static final RobotConfig config = new RobotConfig(
+  //    kMassKg,
+  //    kMassKg*.1*DriveConstants.kTrackWidth*DriveConstants.kTrackWidth,
+  //    null,
+  //     null);
   }
+
+
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
   public static final class CoralBoxConstants{
-    public static final double kSpeed = 0.5;
+    public static final double kSpeed = 1.0;
   }
 
   public static final class ElevatorConstants{
@@ -115,13 +152,65 @@ public final class Constants {
 }
 
   public static final class ElevatorPIDSetpoints{
-    public static final double Base = 0.0;
+    public static final double Base = .7;
     public static final double L1 = 4.0;
-    public static final double L2 = 4.5;
-    public static final double L3 = 6.8;
-    public static final double L4 = 12.0;
+    public static final double L2 = 6.47; //5.47
+    public static final double L3 = 13.7; //12.28
+    public static final double L4 = 24.8; //24
     public static final double Top = 24.15;
     public static final double Half = 12.07;
   }
+
+  public static final class Colors{
+    public static final RGBColor red = new RGBColor(255, 0, 0);
+    public static final RGBColor blue = new RGBColor(0, 0, 255);
+    public static final RGBColor green = new RGBColor(0, 255, 0);
+    public static final RGBColor purple = new RGBColor(150, 0, 150);
+    public static final RGBColor yellow = new RGBColor(255, 100, 0);
+    public static final RGBColor cyan = new RGBColor(0, 150, 150);
+    public static final RGBColor orange = new RGBColor(255, 50, 0);
+  }
+
+  public static final class AlgaeArmConstants{
+    public static final double kP = 0.1;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double currentLimit = 30.0;
+
+    public static final double kUp = 3;
+  }
+
+
+  public static final class VisionConstants{
+
+
+    public static final AprilTagFieldLayout kTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+
+
+    public static final String kPlasticOrangePi = "PlasticOrangePi";
+    public static final Transform3d kRobotToPlasticTransform =
+        new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+
+
+    public static final String kMetalOrangePiRED = "MetalOrangePiRED";
+    public static final Transform3d kRobotToMetalREDTransform =
+        new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+
+    public static final String kMetalOrangePiBLUE = "MetalOrangePiBlue";
+    public static final Transform3d kRobotToMetalBLUETransform =
+      new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+  }
+
+
+
+
+
+ 
+  
 
 }

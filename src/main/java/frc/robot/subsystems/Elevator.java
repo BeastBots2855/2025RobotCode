@@ -6,12 +6,19 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfigurator;
+import com.ctre.phoenix6.hardware.TalonFX;
 // Import only what is needed for the Elevator subsystem functionality.
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ElevatorConstants;
+
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.MusicTone;
 
@@ -82,39 +89,43 @@ public class Elevator extends SubsystemBase {
     // --------------------------------------------------------------------------
     var slot0ConfigsLeft = leftTalonConfiguration.Slot0;
     slot0ConfigsLeft.kS = 0.4; // Overcome static friction
-    slot0ConfigsLeft.kV = 0.213; // Voltage per unit of velocity
+    slot0ConfigsLeft.kV = 0.09; // Voltage per unit of velocity
     slot0ConfigsLeft.kA = 0.00; // Voltage per unit of acceleration (not used)
-    slot0ConfigsLeft.kP = 0.2; // Proportional gain for position control
+    slot0ConfigsLeft.kP = 0.55; // Proportional gain for position control
     slot0ConfigsLeft.kI = 0;   // Integral gain (disabled)
     slot0ConfigsLeft.kD = 0.000; // Derivative gain
+    slot0ConfigsLeft.kG = 0.5;
+    slot0ConfigsLeft.withGravityType(GravityTypeValue.Elevator_Static);
 
     // --------------------------------------------------------------------------
     // Configure Motion Magic parameters for the left elevator motor.
     // Motion Magic provides smooth motion profiling.
     // --------------------------------------------------------------------------
     var leftMotionMagicConfigs = leftTalonConfiguration.MotionMagic;
-    leftMotionMagicConfigs.MotionMagicCruiseVelocity = 64; // Cruise velocity in rps
-    leftMotionMagicConfigs.MotionMagicAcceleration = 640;    // Acceleration in rps/s
-    leftMotionMagicConfigs.MotionMagicJerk = 1600;           // Jerk in rps/s/s
+    leftMotionMagicConfigs.MotionMagicCruiseVelocity = 40; // Cruise velocity in rps
+    leftMotionMagicConfigs.MotionMagicAcceleration = 60;    // Acceleration in rps/s
+    leftMotionMagicConfigs.MotionMagicJerk = 800;           // Jerk in rps/s/s
 
     // --------------------------------------------------------------------------
     // Configure slot 0 parameters for the right elevator motor (same as left).
     // --------------------------------------------------------------------------
     var slot0ConfigsRight = rightTalonConfiguration.Slot0;
-    slot0ConfigsRight.kS = 0.4;
-    slot0ConfigsRight.kV = 0.213;
+    slot0ConfigsRight.kS = 0.4; //0.4
+    slot0ConfigsRight.kV = 0.09; //0.213
     slot0ConfigsRight.kA = 0.00;
-    slot0ConfigsRight.kP = 0.2;
+    slot0ConfigsRight.kP = 0.55;
     slot0ConfigsRight.kI = 0;
     slot0ConfigsRight.kD = 0.0;
+    slot0ConfigsRight.kG = 0.5;
+    slot0ConfigsRight.withGravityType(GravityTypeValue.Elevator_Static);
 
     // --------------------------------------------------------------------------
     // Configure Motion Magic parameters for the right elevator motor.
     // --------------------------------------------------------------------------
     var rightMotionMagicConfigs = rightTalonConfiguration.MotionMagic;
-    rightMotionMagicConfigs.MotionMagicCruiseVelocity = 64;
-    rightMotionMagicConfigs.MotionMagicAcceleration = 640;
-    rightMotionMagicConfigs.MotionMagicJerk = 1600;
+    rightMotionMagicConfigs.MotionMagicCruiseVelocity = 40; //64, 10, 50
+    rightMotionMagicConfigs.MotionMagicAcceleration = 60; //640, 30, 100
+    rightMotionMagicConfigs.MotionMagicJerk = 800; //1600
 
     // --------------------------------------------------------------------------
     // Set the motor output inversion so that the motor rotates in the proper direction.
@@ -122,11 +133,15 @@ public class Elevator extends SubsystemBase {
     rightTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     leftTalonConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
+    
     // --------------------------------------------------------------------------
     // Apply the configurations to the motor controllers.
     // --------------------------------------------------------------------------
     leftTalonFXSConfigurator.apply(leftTalonConfiguration);
     rightTalonFXSConfigurator.apply(rightTalonConfiguration);
+
+
+    stop();
   }
 
   /**
@@ -135,6 +150,7 @@ public class Elevator extends SubsystemBase {
   public void resetEncoders() {
     m_right.setPosition(0);
     m_left.setPosition(0);
+    System.out.println("reset encoders");
   }
 
   /**
@@ -157,12 +173,21 @@ public class Elevator extends SubsystemBase {
     currDesiredSetpoint = setpoint;
   }
 
+  
+
   /**
   * Stops the elevator by setting motor outputs to zero.
   */
   public void stop() {
     m_left.set(0);
     m_right.set(0);
+
+    isPIDEnabled = false;
+  }
+
+  public void hold(){
+    m_left.set(ElevatorConstants.feedForward);
+    m_right.set(ElevatorConstants.feedForward);
   }
 
   /**
@@ -208,9 +233,11 @@ public class Elevator extends SubsystemBase {
         m_right.set(0);
         System.out.println("at bottom");
     } else {
+      
         // Scale speed by 0.25 and apply to both motors.
-        m_left.set(speed *= .25);
-        m_right.set(speed *= .25);
+
+        m_left.set(speed *= .15);
+        m_right.set(speed *= .15);
         System.out.println("running");
     }
   }
@@ -221,7 +248,7 @@ public class Elevator extends SubsystemBase {
   * @return True if the limit switch is pressed, false otherwise.
   */
   public boolean isLimitSwitchPressed() {
-    return m_limitSwitch.get();
+    return !m_limitSwitch.get();
   }
 
   /**
@@ -242,6 +269,10 @@ public class Elevator extends SubsystemBase {
     return currDesiredSetpoint;
   }
 
+  public double getCurrent(){
+    return m_left.getSupplyCurrent().getValueAsDouble();
+  }
+
 
 
   @Override
@@ -258,9 +289,10 @@ public class Elevator extends SubsystemBase {
       //documentaiotn can be found down below
       // https://v6.docs.ctr-electronics.com/en/2024/docs/api-reference/device-specific/talonfx/motion-magic.html
       if (isPIDEnabled) {
-          final MotionMagicVoltage setpointWithVoltage = new MotionMagicVoltage(currDesiredSetpoint);
-          m_left.setControl(setpointWithVoltage);
+          final MotionMagicVoltage setpointWithVoltage = new MotionMagicVoltage(0);
+          m_left.setControl(setpointWithVoltage.withPosition(currDesiredSetpoint));
           m_right.setControl(setpointWithVoltage);
+          
       }
   
       // Create a MusicTone with 0 frequency (a silent tone) and apply it to both motors.
@@ -268,5 +300,35 @@ public class Elevator extends SubsystemBase {
       MusicTone silentTone = new MusicTone(0);
       m_left.setControl(silentTone);
       m_right.setControl(silentTone);
+
+      SmartDashboard.putNumber("LEFTTTTTTT", m_left.getPosition().getValueAsDouble());
+      SmartDashboard.putNumber("RIGHTTTT", m_right.getPosition().getValueAsDouble());
+      SmartDashboard.putNumber("Setpoint", currDesiredSetpoint);
+      SmartDashboard.putBoolean("At Setpoint", isAtSetpoint());
+  }
+
+  /**
+   * checks if the elevator is within half a rotation of the setpoint
+   * @return if the elevator is within half a rotation of the setpoint
+   */
+  public boolean isAtSetpoint(){
+    //System.out.println("is at setpoint " + (getTargetPos() - getPos()));
+   return((Math.abs(getTargetPos() - getPos())) < 1);
+
+  }
+
+  /**
+   * Allows subsystem data to be displayed on Shuffleboard
+   */
+  @Override
+  public void initSendable(SendableBuilder builder){
+    builder.setSmartDashboardType("Elevator Subsystem");
+    builder.addStringProperty("Now running:", () -> getCurrentCommand().getName(), null);
+    builder.addDoubleProperty("Position", this::getPos, null);
+    builder.addDoubleProperty("Output", this::getOutput, null);
+    builder.addBooleanProperty("Limit Switch", this::isLimitSwitchPressed, null);
+    builder.addBooleanProperty("PID Enabled", () -> isPIDEnabled, null);
+    builder.addDoubleProperty("Setpoint", this::getTargetPos, null);
+    builder.addBooleanProperty("At setpoint?", this::isAtSetpoint, null);
   }
 }

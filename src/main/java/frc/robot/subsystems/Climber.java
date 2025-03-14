@@ -8,28 +8,19 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class AlgaeWheels extends SubsystemBase {
- 
-  private final SparkMax m_controller;
-  
-  
-  
-  /** Creates a new AlgaeWheels. */
-  public AlgaeWheels(SparkMax controller){
-    m_controller = controller;
-
+public class Climber extends SubsystemBase {
+  private final SparkMax m_right;
+  private final SparkMax m_left; 
+  /** Creates a new Climb. */
+  public Climber(SparkMax right, SparkMax left) {
+    m_right = right;
+    m_left = left;
   }
-  /**
-   * Sets speed for motor
-   * 
-   * @param speed     speed of the motor, range -1 to 1 negative = in, positive = out
-   */
+
   public void spin(double speed){
-    
-    m_controller.set(speed);
-
+    m_right.set(-speed);
+    m_left.set(speed);
   }
-
 
   @Override
   public void periodic() {

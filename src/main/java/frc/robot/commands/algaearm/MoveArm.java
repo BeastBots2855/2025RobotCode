@@ -4,12 +4,20 @@
 
 package frc.robot.commands.algaearm;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.AlgaeArm;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class MoveArm extends Command {
   /** Creates a new MoveArm. */
-  public MoveArm() {
+  private AlgaeArm m_AlgaeArm;
+  private DoubleSupplier speed;
+  public MoveArm(AlgaeArm subsystem, DoubleSupplier speed) {
+    addRequirements(subsystem);
+    m_AlgaeArm = subsystem;
+    this.speed = speed;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -19,11 +27,15 @@ public class MoveArm extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_AlgaeArm.move(speed.getAsDouble());
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_AlgaeArm.stop();
+  }
 
   // Returns true when the command should end.
   @Override
