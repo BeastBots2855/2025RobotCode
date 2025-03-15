@@ -72,7 +72,7 @@ public class TeleopDriveToNearestReef extends InstantCommand {
       commandToRun = m_DriveSubsystem.driveToFirstAutoScorePose(side.get()).andThen( 
       new ParallelDeadlineGroup(
         m_DriveSubsystem.driveToSecondAutoScorePose(side.get(), offset.get()), 
-        MoveArmAndElevator),
+        MoveArmAndElevator)).andThen(
       new ParallelDeadlineGroup( new WaitCommand(0.5), new CoralOut(m_IntakeSubsystem, ()-> 0.5))
       );
 
