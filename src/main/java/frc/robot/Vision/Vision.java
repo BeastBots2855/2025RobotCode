@@ -54,7 +54,7 @@ import java.util.List;
     private final static PhotonCamera metalOrangePiRED = new PhotonCamera(VisionConstants.kMetalOrangePiRED);
     private final static PhotonCamera metalOrangePiBLUE = new PhotonCamera(VisionConstants.kMetalOrangePiBLUE);
     
-    private final static PhotonPoseEstimator plasticOrangePiEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToPlasticTransform);
+    // private final static PhotonPoseEstimator plasticOrangePiEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToPlasticTransform);
     private final static PhotonPoseEstimator metalOrangePiREDEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToMetalREDTransform);
    
     private final static PhotonPoseEstimator metalOrangePiBLUEEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToMetalBLUETransform);
@@ -65,7 +65,7 @@ import java.util.List;
 
  
      public Vision() {
-            plasticOrangePiEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
+            // plasticOrangePiEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
             metalOrangePiREDEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
             metalOrangePiBLUEEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
      }
@@ -107,7 +107,7 @@ import java.util.List;
             metalOrangePiREDEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D()));
             visionEst = metalOrangePiREDEstimator.update(result);
             if (visionEst.isPresent()) {
-                updateEstimationStdDevs(metalOrangePiREDEstimator, 
+                updateEstimationStdDevsConstrained(metalOrangePiREDEstimator, 
                     curStdDevsMetalRED,
                     visionEst, 
                     result.getTargets());
@@ -130,7 +130,7 @@ import java.util.List;
             metalOrangePiBLUEEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D()));
             visionEst = metalOrangePiBLUEEstimator.update(result);
             if (visionEst.isPresent()) {
-                updateEstimationStdDevs(metalOrangePiBLUEEstimator, 
+                updateEstimationStdDevsConstrained(metalOrangePiBLUEEstimator, 
                     curStdDevsMetalBLUE,
                     visionEst, 
                     result.getTargets());
@@ -222,6 +222,62 @@ import java.util.List;
              }
          }
      }
+
+
+
+
+
+
+
+
+
+
+
+
+     private static void updateEstimationStdDevsConstrained(
+        PhotonPoseEstimator photonEstimator, 
+        Matrix<N3, N1> curStdDevs, 
+        Optional<EstimatedRobotPose> estimatedPose, 
+        List<PhotonTrackedTarget> targets) {
+     if (estimatedPose.isEmpty()) {
+         // No pose input. Default to single-tag std devs
+         curStdDevs = VisionConstants.kSingleTagStdDevs;
+     } else {
+         // Pose present. Start running Heuristic
+         var estStdDevs = VisionConstants.kSingleTagStdDevs;
+         int numTags = 0;
+         double avgDist = 0;
+
+         // Precalculation - see how many tags we found, and calculate an average-distance metric
+         for (var tgt : targets) {
+             var tagPose = photonEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
+             if (tagPose.isEmpty()) continue;
+             numTags++;
+             avgDist +=
+                     tagPose
+                             .get()
+                             .toPose2d()
+                             .getTranslation()
+                             .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+         }
+
+         if (numTags == 0) {
+             // No tags visible. Default to single-tag std devs
+             curStdDevs = VisionConstants.kSingleTagStdDevs;
+         } else {
+             // One or more tags visible, run the full heuristic.
+             avgDist /= numTags;
+             // Decrease std devs if multiple targets are visible
+             if (numTags > 1) estStdDevs = VisionConstants.kMultiTagStdDevs;
+             // Increase std devs based on (average) distance
+             if (numTags == 1 && avgDist > 4)
+                 estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+             else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+             estStdDevs.set(2, 0, 99999999);
+             curStdDevs = estStdDevs;
+         }
+     }
+ }
 
 
 
