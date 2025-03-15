@@ -301,7 +301,7 @@ public class RobotContainer {
     m_fightstick.button(10).onTrue(new InstantCommand(()->m_elevator.resetEncoders()));
     //fightstick intake to lightsensor button 6
     m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));
-    new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroHeading()));
+    new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroGyroWithAlliance()));
     m_fightstick.button(9).onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
     //new RunCommand(()->m_robotDrive.zeroHeading()));
     m_fightstick.button(8).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp));
