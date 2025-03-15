@@ -50,14 +50,14 @@ import java.util.List;
  import org.photonvision.targeting.PhotonTrackedTarget;
  
  public class Vision {
-    private final static PhotonCamera plasticOrangePi = new PhotonCamera(VisionConstants.kPlasticOrangePi);;
-    private final static PhotonCamera metalOrangePiRED = new PhotonCamera(VisionConstants.kMetalOrangePiRED);;
-    private final static PhotonCamera metalOrangePiBLUE = new PhotonCamera(VisionConstants.kMetalOrangePiBLUE);;
+    // private final static PhotonCamera plasticOrangePi = new PhotonCamera(VisionConstants.kPlasticOrangePi);
+    private final static PhotonCamera metalOrangePiRED = new PhotonCamera(VisionConstants.kMetalOrangePiRED);
+    private final static PhotonCamera metalOrangePiBLUE = new PhotonCamera(VisionConstants.kMetalOrangePiBLUE);
     
-    private final static PhotonPoseEstimator plasticOrangePiEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToPlasticTransform);;
+    private final static PhotonPoseEstimator plasticOrangePiEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToPlasticTransform);
     private final static PhotonPoseEstimator metalOrangePiREDEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToMetalREDTransform);
    
-    private final static PhotonPoseEstimator metalOrangePiBLUEEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToMetalBLUETransform);;
+    private final static PhotonPoseEstimator metalOrangePiBLUEEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToMetalBLUETransform);
 
     private static Matrix<N3, N1> curStdDevsPlastic = new Matrix<>(N3.instance, N1.instance);
     private static Matrix<N3, N1> curStdDevsMetalRED = new Matrix<>(N3.instance, N1.instance);
@@ -77,21 +77,21 @@ import java.util.List;
      * 
      * @return An Optional containing the estimated robot pose, if available
      */
-    public static Optional<EstimatedRobotPose> getEstimatedPlasticPose(DriveSubsystem m_driveTrain) {
+    // public static Optional<EstimatedRobotPose> getEstimatedPlasticPose(DriveSubsystem m_driveTrain) {
         
-        Optional<EstimatedRobotPose> visionEst = Optional.empty();
-        for (var result : plasticOrangePi.getAllUnreadResults()) {
-            plasticOrangePiEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D()));
-            visionEst = plasticOrangePiEstimator.update(result);
-            if (visionEst.isPresent()) {
-                updateEstimationStdDevs(plasticOrangePiEstimator, 
-                    curStdDevsPlastic,
-                    visionEst, 
-                    result.getTargets());
-            }
-        }
-        return visionEst;
-    }
+    //     Optional<EstimatedRobotPose> visionEst = Optional.empty();
+    //     for (var result : plasticOrangePi.getAllUnreadResults()) {
+    //         plasticOrangePiEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D()));
+    //         visionEst = plasticOrangePiEstimator.update(result);
+    //         if (visionEst.isPresent()) {
+    //             updateEstimationStdDevs(plasticOrangePiEstimator, 
+    //                 curStdDevsPlastic,
+    //                 visionEst, 
+    //                 result.getTargets());
+    //         }
+    //     }
+    //     return visionEst;
+    // }
 
     /**
      * Gets the estimated robot pose from the metal orange Pi RED camera.
@@ -143,16 +143,16 @@ import java.util.List;
 
 
     public static void addAllPoseEstimates(DriveSubsystem m_driveTrain,  SwerveDrivePoseEstimator m_drivePoseEstimator) {
-        var plasticPose = getEstimatedPlasticPose(m_driveTrain);
+        // var plasticPose = getEstimatedPlasticPose(m_driveTrain);
         var metalREDPose = getEstimatedMetalREDPose(m_driveTrain);
         var metalBLUEPose = getEstimatedMetalBLUEPose(m_driveTrain);
 
-        if (plasticPose.isPresent()) {
-            m_drivePoseEstimator.addVisionMeasurement(
-                plasticPose.get().estimatedPose.toPose2d(),
-                plasticPose.get().timestampSeconds,
-                curStdDevsPlastic);
-        }
+        // if (plasticPose.isPresent()) {
+        //     m_drivePoseEstimator.addVisionMeasurement(
+        //         plasticPose.get().estimatedPose.toPose2d(),
+        //         plasticPose.get().timestampSeconds,
+        //         curStdDevsPlastic);
+        // }
 
         if (metalREDPose.isPresent()) {
             m_drivePoseEstimator.addVisionMeasurement(
