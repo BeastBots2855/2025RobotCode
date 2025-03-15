@@ -28,13 +28,14 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorPIDSetpoints;
 import frc.robot.Constants.OIConstants;
-
+import frc.robot.Constants.AutoScoreConstants.Side;
 import frc.robot.utilities.RGBColor;
 import frc.robot.commands.LEDCommands.RAINBOWS;
 import frc.robot.commands.algaearm.AlgaeDown;
 import frc.robot.commands.algaearm.AutoDeploy;
 import frc.robot.commands.algaearm.GoToSetpoint;
 import frc.robot.commands.algaearm.MoveArm;
+import frc.robot.commands.autoScoring.TeleopDriveToNearestReef;
 import frc.robot.commands.climber.Climb;
 import frc.robot.commands.coralbox.CoralHold;
 import frc.robot.commands.coralbox.CoralJuggle;
@@ -302,6 +303,34 @@ public class RobotContainer {
     new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroHeading()));
     m_fightstick.button(8).onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
     //new RunCommand(()->m_robotDrive.zeroHeading()));
+
+
+
+
+    new Trigger(() -> m_driverController.getLeftBumperButton() && m_driverController.getAButton()).onTrue(
+      new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.Base, ()-> new Translation2d(), ()->Side.LEFT)
+    );
+    new Trigger(() -> m_driverController.getLeftBumperButton() && m_driverController.getBButton()).onTrue(
+      new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L2, ()-> new Translation2d(), ()->Side.LEFT)
+    );
+    new Trigger(() -> m_driverController.getLeftBumperButton() && m_driverController.getXButton()).onTrue(
+      new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L3, ()-> new Translation2d(), ()->Side.LEFT)
+    );
+    new Trigger(() -> m_driverController.getLeftBumperButton() && m_driverController.getYButton()).onTrue(
+      new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L4, ()-> new Translation2d(), ()->Side.LEFT)
+    );
+    new Trigger(() -> m_driverController.getRightBumperButton() && m_driverController.getAButton()).onTrue(
+      new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.Base, ()-> new Translation2d(), ()->Side.RIGHT)
+    );
+    new Trigger(() -> m_driverController.getRightBumperButton() && m_driverController.getBButton()).onTrue(
+      new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L2, ()-> new Translation2d(), ()->Side.RIGHT)
+    );
+    new Trigger(() -> m_driverController.getRightBumperButton() && m_driverController.getXButton()).onTrue(
+      new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L3, ()-> new Translation2d(), ()->Side.RIGHT)
+    );
+    new Trigger(() -> m_driverController.getRightBumperButton() && m_driverController.getYButton()).onTrue(
+      new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L4, ()-> new Translation2d(), ()->Side.RIGHT)
+    );
 
   }
 
