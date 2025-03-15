@@ -222,6 +222,9 @@ public static class AutoScoreConstants {                                        
     public static final Pose2d REEF_FACE_FOUR = new Pose2d(5.177, 4.022, new Rotation2d()); //GH
     public static final Pose2d REEF_FACE_FIVE = new Pose2d(4.840, 4.596, new Rotation2d()); //IJ
     public static final Pose2d REEF_FACE_SIX = new Pose2d(4.153, 4.014, new Rotation2d());  //KL
+
+
+    
     public static final Pose2d[] REEF_FACE_ARRAY = new Pose2d[] {
       REEF_FACE_ONE, 
       REEF_FACE_TWO, 
@@ -229,22 +232,27 @@ public static class AutoScoreConstants {                                        
       REEF_FACE_FOUR, 
       REEF_FACE_FIVE, 
       REEF_FACE_SIX};
+
+
+
       public static enum Side {
         LEFT,
         RIGHT
       }
-      public static final Pose2d PoleA = new Pose2d(3.153, 4.175, Rotation2d.fromDegrees(180));
-      public static final Pose2d PoleB = new Pose2d(3.189, 3.827, Rotation2d.fromDegrees(180));
-      public static final Pose2d PoleC = new Pose2d(3.704, 2.952, Rotation2d.fromDegrees(-120));
-      public static final Pose2d PoleD = new Pose2d(3.956, 2.820, Rotation2d.fromDegrees(-120));
-      public static final Pose2d PoleE = new Pose2d(4.975, 2.784, Rotation2d.fromDegrees(-61));
-      public static final Pose2d PoleF = new Pose2d(5.275, 2.940, Rotation2d.fromDegrees(-61));
-      public static final Pose2d PoleG = new Pose2d(5.790, 3.851, Rotation2d.fromDegrees(0));
-      public static final Pose2d PoleH = new Pose2d(5.802, 4.187, Rotation2d.fromDegrees(0));
-      public static final Pose2d PoleI = new Pose2d(5.335, 5.050, Rotation2d.fromDegrees(59));
-      public static final Pose2d PoleJ = new Pose2d(4.999, 5.242, Rotation2d.fromDegrees(59));
-      public static final Pose2d PoleK = new Pose2d(3.956, 5.206, Rotation2d.fromDegrees(123));
-      public static final Pose2d PoleL = new Pose2d(3.680, 5.074, Rotation2d.fromDegrees(123));
+
+
+      public static final Pose2d PoleA = new Pose2d(3.227, 4.191, Rotation2d.fromDegrees(0));
+      public static final Pose2d PoleB = new Pose2d(3.217, 3.859, Rotation2d.fromDegrees(0));
+      public static final Pose2d PoleC = new Pose2d(3.725, 3.011, Rotation2d.fromDegrees(60));
+      public static final Pose2d PoleD = new Pose2d(3.988, 2.835, Rotation2d.fromDegrees(60));
+      public static final Pose2d PoleE = new Pose2d(4.963, 2.806, Rotation2d.fromDegrees(120));
+      public static final Pose2d PoleF = new Pose2d(5.265, 2.992, Rotation2d.fromDegrees(120));
+      public static final Pose2d PoleG = new Pose2d(5.772, 3.851, Rotation2d.fromDegrees(180));
+      public static final Pose2d PoleH = new Pose2d(5.782, 4.171, Rotation2d.fromDegrees(180));
+      public static final Pose2d PoleI = new Pose2d(5.245, 5.058, Rotation2d.fromDegrees(-120));
+      public static final Pose2d PoleJ = new Pose2d(4.982, 5.205, Rotation2d.fromDegrees(-120));
+      public static final Pose2d PoleK = new Pose2d(4.007, 5.195, Rotation2d.fromDegrees(-60));
+      public static final Pose2d PoleL = new Pose2d(3.705,5.010, Rotation2d.fromDegrees(-60));
     }
 
 
