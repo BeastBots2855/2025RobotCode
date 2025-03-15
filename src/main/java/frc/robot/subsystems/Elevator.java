@@ -285,6 +285,9 @@ public class Elevator extends SubsystemBase {
       // and apply it to both motors for smooth positional control. We are setting the setpiont in 
       // rotations but the method of controlling the motors is via voltage rather than percent output
       // hence the name MotionMagicVoltage.
+
+      //documentaiotn can be found down below
+      // https://v6.docs.ctr-electronics.com/en/2024/docs/api-reference/device-specific/talonfx/motion-magic.html
       if (isPIDEnabled) {
           final MotionMagicVoltage setpointWithVoltage = new MotionMagicVoltage(0);
           m_left.setControl(setpointWithVoltage.withPosition(currDesiredSetpoint));

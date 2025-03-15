@@ -7,22 +7,30 @@ package frc.robot.subsystems;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.AutoScoreConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Vision.Vision;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -50,6 +58,8 @@ public class DriveSubsystem extends SubsystemBase {
   // The gyro sensor
   private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
 
+  private final boolean isVisionEnabled = true;
+
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
@@ -59,11 +69,26 @@ public class DriveSubsystem extends SubsystemBase {
           m_frontRight.getPosition(),
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
-      });
+      }); 
+
+  SwerveDrivePoseEstimator m_DrivePoseEstimator = new SwerveDrivePoseEstimator(
+    DriveConstants.kDriveKinematics,
+    getHeadingRotation2D(),
+    new SwerveModulePosition[] {
+        m_frontLeft.getPosition(),
+        m_frontRight.getPosition(),
+        m_rearLeft.getPosition(),
+        m_rearRight.getPosition()
+    },
+    new Pose2d(),
+    VecBuilder.fill(0.85, 0.85, Units.degreesToRadians(0.5)), // initiial was 0.05 for both on top and 0.5 for bottom, 0.05, 0.05, 0.65
+    VecBuilder.fill(0.55, 0.55, Units.degreesToRadians(6)) // 0.5, 0.5, 5
+                                                                              );
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
 
+    
     System.out.println("starting auto configuration ::::::::::::::::");
        RobotConfig config;
     try{
@@ -113,6 +138,19 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+    if(isVisionEnabled){
+      m_DrivePoseEstimator.update(
+      getHeadingRotation2D(),
+      new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_rearLeft.getPosition(),
+          m_rearRight.getPosition()
+      });
+
+      Vision.addAllPoseEstimates(this, this.m_DrivePoseEstimator);
+    }
   }
 
   /**
@@ -121,7 +159,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
+    if(isVisionEnabled) {
+      return m_DrivePoseEstimator.getEstimatedPosition();
+    } else {
     return m_odometry.getPoseMeters();
+    }
   }
 
   /**
@@ -139,6 +181,17 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         },
         pose);
+    if(isVisionEnabled) {
+      m_DrivePoseEstimator.resetPosition(
+        getHeadingRotation2D(),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        },
+        pose);
+    }
   }
 
   /**
@@ -259,5 +312,139 @@ public class DriveSubsystem extends SubsystemBase {
     drive(speedx, speedy, rot, false);
     
   }
-  
+
+
+
+
+
+
+
+
+
+
+
+      /**
+     * This will zero (calibrate) the robot to assume the current position is facing forward
+     * <p>
+     * If red alliance rotate the robot 180 after the drviebase zero command
+     */
+    public void zeroGyroWithAlliance()
+    {
+      if (isRedAlliance())
+      {
+        zeroHeading();
+        //Set the pose 180 degrees
+        resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+      } else
+      {
+        zeroHeading();
+      }
+    }
+
+
+
+    private boolean isRedAlliance()
+    {
+      var alliance = DriverStation.getAlliance();
+      return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+    }
+
+
+
+        public Command driveToPose(Pose2d pose)
+    {
+      // Create the constraints to use while pathfinding
+      PathConstraints constraints = new PathConstraints(
+          3, 4.0,
+          Math.PI * 2, Math.PI * 2);
+
+      // Since AutoBuilder is configured, we can use it to build pathfinding commands
+      return AutoBuilder.pathfindToPose(
+          pose,
+          constraints,
+          edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+                                      );
+    }
+
+
+
+    public Command driveToPoseSlowMode(Pose2d pose)
+    {
+      // Create the constraints to use while pathfinding
+      PathConstraints constraints = new PathConstraints(
+          3, 0.5,
+          Math.PI * 2, Math.PI * 2 / 3);
+
+      // Since AutoBuilder is configured, we can use it to build pathfinding commands
+      return AutoBuilder.pathfindToPose(
+          pose,
+          constraints,
+          edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+                                      );
+    }
+
+
+
+
+    public Pose2d shiftPoseRobotRelative(Pose2d currentPose, Translation2d shift) {
+      // Apply the translation in robot-relative terms, considering the current orientation
+      Translation2d newTranslation = currentPose.getTranslation().plus(shift.rotateBy(currentPose.getRotation()));
+      // Return the new pose with the updated translation but maintaining the same rotation
+      return new Pose2d(newTranslation, currentPose.getRotation());
+  }
+
+    public Pose2d getNearestPole(AutoScoreConstants.Side side) {
+        Pose2d currentPose = getPose();
+        Pose2d closestPose = AutoScoreConstants.REEF_FACE_ARRAY[0];
+        double closestDistance = 999999;
+        for(Pose2d reefPose : AutoScoreConstants.REEF_FACE_ARRAY) {
+          double delta_x = Math.abs(currentPose.getX() - reefPose.getX());
+          double delta_y = Math.abs(currentPose.getY() - reefPose.getY());
+          double distance = Math.hypot(delta_x, delta_y);
+          if(distance < closestDistance) {
+            closestDistance = distance;
+            closestPose = reefPose;
+          }
+        }
+        if(closestPose.equals(AutoScoreConstants.REEF_FACE_ONE)) {
+          return side.equals(AutoScoreConstants.Side.LEFT) ?  AutoScoreConstants.PoleA : AutoScoreConstants.PoleB;
+        } else if(closestPose.equals(AutoScoreConstants.REEF_FACE_TWO)) {
+          return side.equals(AutoScoreConstants.Side.LEFT) ? AutoScoreConstants.PoleC : AutoScoreConstants.PoleD;
+        } else if(closestPose.equals(AutoScoreConstants.REEF_FACE_THREE)) {
+          return side.equals(AutoScoreConstants.Side.LEFT) ? AutoScoreConstants.PoleE : AutoScoreConstants.PoleF;
+        } else if(closestPose.equals(AutoScoreConstants.REEF_FACE_FOUR)) {
+          return side.equals(AutoScoreConstants.Side.LEFT) ? AutoScoreConstants.PoleG : AutoScoreConstants.PoleH;
+        } else if(closestPose.equals(AutoScoreConstants.REEF_FACE_FIVE)) {
+          return side.equals(AutoScoreConstants.Side.LEFT) ? AutoScoreConstants.PoleI : AutoScoreConstants.PoleJ;
+        } else if(closestPose.equals(AutoScoreConstants.REEF_FACE_SIX)) {
+          return side.equals(AutoScoreConstants.Side.LEFT) ? AutoScoreConstants.PoleK : AutoScoreConstants.PoleL;
+        } else {
+          return new Pose2d();
+        }
+    }
+
+        //needed because otherwise command will precalcualte all the nearest pole values rather than on the fly, specifically the getNearestPole
+    public Command driveToFirstAutoScorePose(AutoScoreConstants.Side side){
+      Translation2d shiftBackward = new Translation2d(-0.5, 0);
+      Pose2d nearestPole = getNearestPole(side);
+      Pose2d initalPoseToPlanTo = shiftPoseRobotRelative(nearestPole, shiftBackward);
+      System.out.println("Initial Target Pose: " + initalPoseToPlanTo.getX() + ", " + initalPoseToPlanTo.getY()+ ", " + nearestPole.getRotation().getRadians());
+      return driveToPose(initalPoseToPlanTo);
+    }
+
+    public Command driveToSecondAutoScorePose(AutoScoreConstants.Side side, Translation2d coralOffset) {
+      Pose2d nearestPole = getNearestPole(side);
+      // offset depending on coral location in intake
+      nearestPole = shiftPoseRobotRelative(nearestPole, coralOffset);
+      return driveToPoseSlowMode(nearestPole);
+    }
+
+    
+
+
+
+
+    
+
+    
 }
