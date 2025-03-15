@@ -159,7 +159,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
+    if(isVisionEnabled) {
+      return m_DrivePoseEstimator.getEstimatedPosition();
+    } else {
     return m_odometry.getPoseMeters();
+    }
   }
 
   /**
@@ -177,6 +181,17 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         },
         pose);
+    if(isVisionEnabled) {
+      m_DrivePoseEstimator.resetPosition(
+        getHeadingRotation2D(),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        },
+        pose);
+    }
   }
 
   /**
