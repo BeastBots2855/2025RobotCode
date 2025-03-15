@@ -25,6 +25,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.AutoScoreConstants;
@@ -59,6 +60,8 @@ public class DriveSubsystem extends SubsystemBase {
   private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
 
   private final boolean isVisionEnabled = true;
+
+  Field2d field = new Field2d();
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -151,6 +154,8 @@ public class DriveSubsystem extends SubsystemBase {
 
       Vision.addAllPoseEstimates(this, this.m_DrivePoseEstimator);
     }
+
+    field.setRobotPose(getPose());
   }
 
   /**
