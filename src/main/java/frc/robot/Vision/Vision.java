@@ -55,9 +55,9 @@ import java.util.List;
     private final static PhotonCamera metalOrangePiBLUE = new PhotonCamera(VisionConstants.kMetalOrangePiBLUE);
     
     // private final static PhotonPoseEstimator plasticOrangePiEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToPlasticTransform);
-    private final static PhotonPoseEstimator metalOrangePiREDEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToMetalREDTransform);
+    private final static PhotonPoseEstimator metalOrangePiREDEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE, VisionConstants.kRobotToMetalREDTransform);
    
-    private final static PhotonPoseEstimator metalOrangePiBLUEEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToMetalBLUETransform);
+    private final static PhotonPoseEstimator metalOrangePiBLUEEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE, VisionConstants.kRobotToMetalBLUETransform);
 
     private static Matrix<N3, N1> curStdDevsPlastic = new Matrix<>(N3.instance, N1.instance);
     private static Matrix<N3, N1> curStdDevsMetalRED = new Matrix<>(N3.instance, N1.instance);
@@ -219,6 +219,12 @@ import java.util.List;
                      estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
                  else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
                  curStdDevs = estStdDevs;
+
+                 if(avgDist < 2.5) {
+                 curStdDevs = VecBuilder.fill(0.7, 0.7, 99999);
+                 } else {
+                    curStdDevs = VecBuilder.fill(10000, 100000, 99999);
+                 }
              }
          }
      }
@@ -275,7 +281,14 @@ import java.util.List;
              else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
              estStdDevs.set(2, 0, 99999999);
              curStdDevs = estStdDevs;
-         }
+         } 
+
+         
+         if(avgDist < 2.5) {
+            curStdDevs = VecBuilder.fill(0.7, 0.7, 99999);
+            } else {
+               curStdDevs = VecBuilder.fill(10000, 100000, 99999);
+        }
      }
  }
 

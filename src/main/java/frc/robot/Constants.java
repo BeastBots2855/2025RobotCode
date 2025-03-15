@@ -226,7 +226,7 @@ public static class AutoScoreConstants {                                        
     public static final Pose2d REEF_FACE_SIX = new Pose2d(4.153, 4.014, new Rotation2d());  //KL
 
 
-    
+
     public static final Pose2d[] REEF_FACE_ARRAY = new Pose2d[] {
       REEF_FACE_ONE, 
       REEF_FACE_TWO, 
@@ -255,6 +255,10 @@ public static class AutoScoreConstants {                                        
       public static final Pose2d PoleJ = new Pose2d(4.982, 5.205, Rotation2d.fromDegrees(-120));
       public static final Pose2d PoleK = new Pose2d(4.007, 5.195, Rotation2d.fromDegrees(-60));
       public static final Pose2d PoleL = new Pose2d(3.705,5.010, Rotation2d.fromDegrees(-60));
+
+
+
+      public static final Pose2d Left = new Pose2d(3.705,5.010, Rotation2d.fromDegrees(-60));
     }
 
 
