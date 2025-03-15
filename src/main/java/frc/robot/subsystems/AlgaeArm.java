@@ -28,6 +28,7 @@ public class AlgaeArm extends SubsystemBase {
   private double targetSetpoint;
   private SparkMaxConfig m_AlgaeMotorConfig;
   private PIDController m_PIDController;
+  private boolean PIDEnabled;
 
   
 
@@ -41,6 +42,7 @@ public class AlgaeArm extends SubsystemBase {
   }
 
   public void move(Double speed){
+    PIDOff();
     speed *= .25;
     m_AlgaeArmMotor.set(speed);
   }
@@ -68,11 +70,21 @@ public class AlgaeArm extends SubsystemBase {
   public void resetPosition(){
     m_RelativeEncoder.setPosition(0.0);
   }
+
+  public void PIDOn(){
+    PIDEnabled = true;
+  }
+
+  public void PIDOff(){
+    PIDEnabled = false;
+  }
   
 
   @Override
   public void periodic() {
-    m_AlgaeArmMotor.set(m_PIDController.calculate(getPos(), targetSetpoint));
+    if(PIDEnabled){
+     m_AlgaeArmMotor.set(m_PIDController.calculate(getPos(), targetSetpoint));
+    } 
 
     SmartDashboard.putNumber("Algae Encoder Pos", m_RelativeEncoder.getPosition());
     SmartDashboard.putNumber("Algae Current", m_AlgaeArmMotor.getOutputCurrent());

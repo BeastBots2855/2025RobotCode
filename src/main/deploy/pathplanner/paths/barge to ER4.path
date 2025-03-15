@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.9593220338983046,
+      "minWaypointRelativePos": 0.803389830508475,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.3,
@@ -47,8 +47,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Do whatever the fuck",
-      "waypointRelativePos": 1.0,
+      "name": "ElevatorToL4",
+      "waypointRelativePos": 0.9322033898305074,
       "endWaypointRelativePos": null,
       "command": {
         "type": "sequential",
@@ -78,14 +78,19 @@
                   }
                 ]
               }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "ElevatorToBase"
-              }
             }
           ]
+        }
+      }
+    },
+    {
+      "name": "ElevatorToBase",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ElevatorToBase"
         }
       }
     }

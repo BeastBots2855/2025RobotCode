@@ -37,6 +37,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     m_robotContainer.getElevator().resetEncoders();
     m_robotContainer.getLED().setColor(Colors.yellow);
+    m_robotContainer.getAlgaeArm().resetPosition();
     SmartDashboard.putData(CommandScheduler.getInstance());
     
     
