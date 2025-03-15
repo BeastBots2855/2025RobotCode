@@ -123,7 +123,7 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
-    public static final PIDConstants kPIDDrive = new PIDConstants(3.2,0.0,0.2);
+    public static final PIDConstants kPIDDrive = new PIDConstants(3.2,0.0, 0);
     public static final PIDConstants kPIDRot = new PIDConstants(3.0, 0.0, 0.0);
 
     public static final double kMassKg = 135/2.2;
@@ -200,13 +200,13 @@ public final class Constants {
 
 
 
-    public static final String kMetalOrangePiRED = "MetalOrangePiRED";
+    public static final String kMetalOrangePiRED = "MetalOrangePiREDCamera";
     public static final Transform3d kRobotToMetalREDTransform =
-        new Transform3d(new Translation3d(0.24892, -0.206375, 0.159004), new Rotation3d(0, 0, 0));
+        new Transform3d(new Translation3d(0.24892, -0.206375, 0.159004), new Rotation3d(0, 0, Math.toRadians(31)));
 
-    public static final String kMetalOrangePiBLUE = "MetalOrangePiBlue";
+    public static final String kMetalOrangePiBLUE = "MetalOrangePiBlueCamera";
     public static final Transform3d kRobotToMetalBLUETransform =
-      new Transform3d(new Translation3d(0.24892, 0.206375, 0.159004), new Rotation3d(0, 0, 0));
+      new Transform3d(new Translation3d(0.24892, 0.206375, 0.159004), new Rotation3d(0, 0, Math.toRadians(-31)));
 
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
