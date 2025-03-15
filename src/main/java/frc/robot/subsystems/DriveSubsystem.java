@@ -29,6 +29,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.AutoScoreConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Vision.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -148,7 +149,7 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
       });
 
-      m_DrivePoseEstimator.addVisionMeasurement(getPose(), getHeading());
+      Vision.addAllPoseEstimates(this, this.m_DrivePoseEstimator);
     }
   }
 

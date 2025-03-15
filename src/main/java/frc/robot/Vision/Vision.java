@@ -59,20 +59,15 @@ import java.util.List;
    
     private final static PhotonPoseEstimator metalOrangePiBLUEEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, PoseStrategy.CONSTRAINED_SOLVEPNP, VisionConstants.kRobotToMetalBLUETransform);;
 
-    private static Matrix<N3, N1> curStdDevsPlastic;
-    private static Matrix<N3, N1> curStdDevsMetalRED;
-    private static Matrix<N3, N1> curStdDevsMetalBLUE;
+    private static Matrix<N3, N1> curStdDevsPlastic = new Matrix<>(N3.instance, N1.instance);
+    private static Matrix<N3, N1> curStdDevsMetalRED = new Matrix<>(N3.instance, N1.instance);
+    private static Matrix<N3, N1> curStdDevsMetalBLUE = new Matrix<>(N3.instance, N1.instance);
 
  
      public Vision() {
             plasticOrangePiEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
             metalOrangePiREDEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
             metalOrangePiBLUEEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
-
-
-            curStdDevsPlastic = new Matrix<>(N3.instance, N1.instance);
-            curStdDevsMetalRED = new Matrix<>(N3.instance, N1.instance);
-            curStdDevsMetalBLUE = new Matrix<>(N3.instance, N1.instance);
      }
 
 
@@ -82,7 +77,7 @@ import java.util.List;
      * 
      * @return An Optional containing the estimated robot pose, if available
      */
-    public Optional<EstimatedRobotPose> getEstimatedPlasticPose(DriveSubsystem m_driveTrain) {
+    public static Optional<EstimatedRobotPose> getEstimatedPlasticPose(DriveSubsystem m_driveTrain) {
         
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : plasticOrangePi.getAllUnreadResults()) {
@@ -105,7 +100,7 @@ import java.util.List;
      * @param m_driveTrain The drive subsystem to get heading data from
      * @return An Optional containing the estimated robot pose, if available
      */
-    public Optional<EstimatedRobotPose> getEstimatedMetalREDPose(DriveSubsystem m_driveTrain) {
+    public static Optional<EstimatedRobotPose> getEstimatedMetalREDPose(DriveSubsystem m_driveTrain) {
         
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : metalOrangePiRED.getAllUnreadResults()) {
@@ -128,7 +123,7 @@ import java.util.List;
      * @param m_driveTrain The drive subsystem to get heading data from
      * @return An Optional containing the estimated robot pose, if available
      */
-    public Optional<EstimatedRobotPose> getEstimatedMetalBLUEPose(DriveSubsystem m_driveTrain) {
+    public static Optional<EstimatedRobotPose> getEstimatedMetalBLUEPose(DriveSubsystem m_driveTrain) {
         
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : metalOrangePiBLUE.getAllUnreadResults()) {
@@ -147,7 +142,7 @@ import java.util.List;
 
 
 
-    public void addAllPoseEstimates(DriveSubsystem m_driveTrain,  SwerveDrivePoseEstimator m_drivePoseEstimator) {
+    public static void addAllPoseEstimates(DriveSubsystem m_driveTrain,  SwerveDrivePoseEstimator m_drivePoseEstimator) {
         var plasticPose = getEstimatedPlasticPose(m_driveTrain);
         var metalREDPose = getEstimatedMetalREDPose(m_driveTrain);
         var metalBLUEPose = getEstimatedMetalBLUEPose(m_driveTrain);
@@ -184,7 +179,7 @@ import java.util.List;
       * @param estimatedPose The estimated pose to guess standard deviations for.
       * @param targets All targets in this camera frame
       */
-     private void updateEstimationStdDevs(
+     private static void updateEstimationStdDevs(
             PhotonPoseEstimator photonEstimator, 
             Matrix<N3, N1> curStdDevs, 
             Optional<EstimatedRobotPose> estimatedPose, 
@@ -241,15 +236,15 @@ import java.util.List;
       * edu.wpi.first.math.estimator.SwerveDrivePoseEstimator SwerveDrivePoseEstimator}. This should
       * only be used when there are targets visible.
       */
-     public Matrix<N3, N1> getEstimatedPlasticSdtDevs() {
+     public static Matrix<N3, N1> getEstimatedPlasticSdtDevs() {
          return curStdDevsPlastic;
      }
 
-    public Matrix<N3, N1> getEstimatedMetalREDSdtDevs() {
+    public static Matrix<N3, N1> getEstimatedMetalREDSdtDevs() {
         return curStdDevsMetalRED;
     }
 
-    public Matrix<N3, N1> getEstimatedMetalBLUESdtDevs() {
+    public static Matrix<N3, N1> getEstimatedMetalBLUESdtDevs() {
         return curStdDevsMetalBLUE;
     }
 
