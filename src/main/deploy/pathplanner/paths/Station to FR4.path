@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.813356164383562,
-        "y": 7.563548801369863
+        "x": 1.473,
+        "y": 0.817
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.070376712328768,
-        "y": 6.7671875
+        "x": 2.17014660866561,
+        "y": 1.3757181307730177
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.319092465753425,
-        "y": 5.114362157534247
+        "x": 3.9667808219178085,
+        "y": 2.785380993150685
       },
       "prevControl": {
-        "x": 6.175556506849315,
-        "y": 6.316416952054794
+        "x": 3.485958904109589,
+        "y": 1.883839897260274
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,11 +32,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8813559322033896,
+      "minWaypointRelativePos": 0.9084745762711861,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.3,
-        "maxAcceleration": 0.3,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -44,25 +44,14 @@
       }
     }
   ],
-  "pointTowardsZones": [
-    {
-      "fieldPosition": {
-        "x": 5.0,
-        "y": 4.5
-      },
-      "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.25,
-      "maxWaypointRelativePos": 1.0,
-      "name": "Point Towards Zone"
-    }
-  ],
+  "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "ElevatorToL4",
-      "waypointRelativePos": 0.8271186440677979,
+      "waypointRelativePos": 0.9288135593220341,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "race",
+        "type": "sequential",
         "data": {
           "commands": [
             {
@@ -70,32 +59,38 @@
               "data": {
                 "name": "ElevatorToL4"
               }
+            },
+            {
+              "type": "deadline",
+              "data": {
+                "commands": [
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "CoralOut"
+                    }
+                  },
+                  {
+                    "type": "wait",
+                    "data": {
+                      "waitTime": 0.3
+                    }
+                  }
+                ]
+              }
             }
           ]
         }
       }
     },
     {
-      "name": "run box",
-      "waypointRelativePos": 0.969491525423729,
+      "name": "ElevatorToBase",
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "deadline",
+        "type": "named",
         "data": {
-          "commands": [
-            {
-              "type": "wait",
-              "data": {
-                "waitTime": 2.0
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "CoralOut"
-              }
-            }
-          ]
+          "name": "ElevatorToBase"
         }
       }
     }
@@ -110,13 +105,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -117.59729586864378
+    "rotation": 57.99461679191649
   },
   "reversed": false,
-  "folder": "left paths",
+  "folder": "Right paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -126.49575674769312
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

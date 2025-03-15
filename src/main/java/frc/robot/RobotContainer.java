@@ -32,6 +32,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.utilities.RGBColor;
 import frc.robot.commands.LEDCommands.RAINBOWS;
 import frc.robot.commands.algaearm.AlgaeDown;
+import frc.robot.commands.algaearm.AlgaeZero;
 import frc.robot.commands.algaearm.AutoDeploy;
 import frc.robot.commands.algaearm.GoToSetpoint;
 import frc.robot.commands.algaearm.MoveArm;
@@ -151,6 +152,7 @@ public class RobotContainer {
       autoChooser = new SendableChooser<>();
       autoChooser.addOption("GoofyAuto", "GoofyAuto");
       autoChooser.addOption("3PieceChickenDinner", "3PieceChickenDinner");
+      autoChooser.addOption("DoSomeRightSideStuff", "DoSomeRightSideStuff");
     // Configure the button bindings
     configureButtonBindings();
 
@@ -243,16 +245,15 @@ public class RobotContainer {
         ()->m_elevator.isLimitSwitchPressed() == true)
           .onTrue(new WaitCommand(.1)
           .andThen(new InstantCommand(()->m_elevator.resetEncoders())));
-      new Trigger(()->m_elevator.getPos() > 4.0)
+     /*  new Trigger(()->m_elevator.getPos() > 4.0)
         .onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp));
       new Trigger(()-> m_elevator.getPos() < 4.0).onTrue(new AlgaeDown(m_AlgaeArm));
-      
+      */
       new Trigger(()->Math.abs(m_fightstick.getLeftY()) > .5)
         .whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
       new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1)
         .whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
-      new Trigger(()->m_AlgaeArm.getCurrent() > AlgaeArmConstants.currentLimit)
-        .onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
+     
     
     /**
      * slows drive to 10% when elevator is above L2
@@ -289,7 +290,7 @@ public class RobotContainer {
     m_operatorController.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
     m_operatorController.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
     m_operatorController.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
-    m_fightstick.button(9).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
+   // m_fightstick.button(9).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
     m_fightstick.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
     m_fightstick.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
     m_fightstick.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
@@ -300,8 +301,11 @@ public class RobotContainer {
     //fightstick intake to lightsensor button 6
     m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));
     new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroHeading()));
-    m_fightstick.button(8).onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
+    m_fightstick.button(9).onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
     //new RunCommand(()->m_robotDrive.zeroHeading()));
+    m_fightstick.button(8).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp));
+    m_fightstick.button(7).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kDown));
+    m_operatorController.button(8).onTrue(new AlgaeZero(m_AlgaeArm));
 
   }
 
@@ -366,6 +370,10 @@ public class RobotContainer {
 
     public LED getLED(){
         return m_ledString;
+    }
+
+    public AlgaeArm getAlgaeArm(){
+      return m_AlgaeArm;
     }
 
    
