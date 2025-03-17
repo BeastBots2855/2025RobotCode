@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -57,6 +58,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -307,6 +309,16 @@ public class RobotContainer {
     m_fightstick.button(8).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp));
     m_fightstick.button(7).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kDown));
     m_operatorController.button(8).onTrue(new AlgaeZero(m_AlgaeArm));
+   
+    m_operatorController.button(6).onTrue(
+      new ElevatorToSetpoint(ElevatorPIDSetpoints.L2Algae, m_elevator)
+      .andThen(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp))
+      .andThen(new RunCommand(()->m_CoralBox.spin(0.99)).alongWith(new RunCommand(()->m_AlgaeArm.move(.75))))
+      .withTimeout(2)
+      
+      .andThen(new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator))
+      .andThen(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kDown))
+    );
 
 
 
