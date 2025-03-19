@@ -43,5 +43,7 @@ public class CoralBox extends SubsystemBase {
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Dst sensor (smartdashboard)", getDistance());
+        SmartDashboard.putData("Current Command", getCurrentCommand());
+        SmartDashboard.putNumber("Coral Motor Speed", m_boxMotor.get());
     }
 }
