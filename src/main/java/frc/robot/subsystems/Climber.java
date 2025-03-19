@@ -4,22 +4,30 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
   private final SparkMax m_right;
   private final SparkMax m_left; 
+  private final AbsoluteEncoder m_Encoder;
   /** Creates a new Climb. */
   public Climber(SparkMax right, SparkMax left) {
     m_right = right;
     m_left = left;
+    m_Encoder = m_left.getAbsoluteEncoder();
   }
 
   public void spin(double speed){
     m_right.set(-speed);
     m_left.set(speed);
+  }
+
+  public double getEncoder(){
+    return m_Encoder.getPosition();
   }
 
   @Override
