@@ -89,6 +89,6 @@ public class AlgaeArm extends SubsystemBase {
     SmartDashboard.putBoolean("PID Enabled", PIDEnabled);
     SmartDashboard.putNumber("Algae Encoder Pos", m_RelativeEncoder.getPosition());
     SmartDashboard.putNumber("Algae Current", m_AlgaeArmMotor.getOutputCurrent());
-    SmartDashboard.putData("Current Command", getCurrentCommand());
+    SmartDashboard.putString("Algae Current Command", getCurrentCommand() == null ? "Null" : getCurrentCommand().getName());
   }
 }

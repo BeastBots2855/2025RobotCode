@@ -184,6 +184,7 @@ public final class Constants {
     public static final double kUp = -20;
     public static final double kDown = 2;
     public static final double kZero = 0;
+    public static final double kLineUp = 10;
   }
 
 
