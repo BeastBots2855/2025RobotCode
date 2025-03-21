@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.6528253424657535,
+        "x": 1.6,
         "y": 7.353189212328767
       },
       "prevControl": {
-        "x": 5.048725221064109,
-        "y": 5.135304110850174
+        "x": 5.4113949274390025,
+        "y": 5.965954907707777
       },
       "nextControl": null,
       "isLocked": false,
@@ -69,6 +69,12 @@
           "name": "ElevatorToBase"
         }
       }
+    },
+    {
+      "name": "",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
     }
   ],
   "globalConstraints": {
@@ -81,7 +87,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 129.17365797044422
+    "rotation": 127.14607840660602
   },
   "reversed": false,
   "folder": "left paths",

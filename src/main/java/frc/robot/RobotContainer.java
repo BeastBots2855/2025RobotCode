@@ -137,6 +137,8 @@ public class RobotContainer {
     namedCommands.put("ElevatorToL1", new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
     namedCommands.put("ElevatorToBase", new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator));
     namedCommands.put("CoralOut", new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed()));
+    namedCommands.put("AlgaeRemoveL2", new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L2Algae));
+    namedCommands.put("AlgaeRemoveL3", new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
 
 
     //Command CoralHold = new CoralHold(m_CoralBox);
