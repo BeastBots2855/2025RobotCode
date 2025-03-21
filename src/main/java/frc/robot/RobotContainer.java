@@ -91,7 +91,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
   CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
   CommandXboxController m_fightstick = new CommandXboxController(OIConstants.kFightStickPort);
   ShuffleboardTab tab = Shuffleboard.getTab("main tab");
@@ -223,10 +223,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+   
 
     new Trigger(()->m_driverController.getRightTriggerAxis() > 0.05).whileTrue(new Climb(() -> m_driverController.getRightTriggerAxis() * 0.5, m_Climb));
     new Trigger(()->m_driverController.getLeftTriggerAxis() > 0.05).whileTrue(new Climb(() -> -m_driverController.getLeftTriggerAxis() * 0.5, m_Climb));         
@@ -313,12 +310,13 @@ public class RobotContainer {
     m_fightstick.button(10).onTrue(new InstantCommand(()->m_elevator.resetEncoders()));
     //fightstick intake to lightsensor button 6
     m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));
-    new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroGyroWithAlliance()));
-    m_fightstick.button(9).onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
+    m_driverController.button (8).onTrue(new InstantCommand(()->m_robotDrive.zeroGyroWithAlliance()));
+    //m_fightstick.button(9).onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
     //new RunCommand(()->m_robotDrive.zeroHeading()));
     m_fightstick.button(8).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp));
     m_fightstick.button(7).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kDown));
     m_operatorController.button(8).onTrue(new AlgaeZero(m_AlgaeArm));
+    m_fightstick.button(9).onTrue(new InstantCommand(()->swapControllers(true)));
    
    /* m_operatorController.button(6).onTrue(
       new ElevatorToSetpoint(ElevatorPIDSetpoints.L2Algae, m_elevator)
@@ -335,7 +333,7 @@ public class RobotContainer {
 
 
 
-
+/* 
     new Trigger(() -> m_driverController.getLeftBumperButton() && m_driverController.getAButton()).onTrue(
       new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.Base, ()-> new Translation2d(), ()->Side.LEFT)
     );
@@ -360,7 +358,7 @@ public class RobotContainer {
     new Trigger(() -> m_driverController.getRightBumperButton() && m_driverController.getYButton()).onTrue(
       new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L4, ()-> new Translation2d(), ()->Side.RIGHT)
     );
-
+    */
   }
 
   /**
@@ -428,6 +426,16 @@ public class RobotContainer {
 
     public AlgaeArm getAlgaeArm(){
       return m_AlgaeArm;
+    }
+
+    private void swapControllers(boolean swapControllers){
+      if(swapControllers){
+       m_driverController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+       m_operatorController = new CommandXboxController(OIConstants.kDriverControllerPort);
+      }else{
+        m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+        m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+      }
     }
 
    

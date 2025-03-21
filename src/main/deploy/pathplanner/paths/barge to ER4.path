@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.023715753424659,
-        "y": 0.7869648972602739
+        "x": 7.287457191780821,
+        "y": 0.48645119863013747
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.119576581779022,
-        "y": 2.121824985341142
+        "x": 5.2762714183221,
+        "y": 2.8434394670213843
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 2.9356378424657534
       },
       "prevControl": {
-        "x": 5.847027952164568,
-        "y": 2.5195142762589895
+        "x": 5.769806201081059,
+        "y": 2.3663811566826514
       },
       "nextControl": null,
       "isLocked": false,
@@ -84,13 +84,50 @@
       }
     },
     {
+      "name": "score",
+      "waypointRelativePos": 0.95,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "race",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 2.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "CoralOut"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
       "name": "ElevatorToBase",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "named",
+        "type": "race",
         "data": {
-          "name": "ElevatorToBase"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ElevatorToBase"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 1.0
+              }
+            }
+          ]
         }
       }
     }
@@ -99,7 +136,7 @@
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 360.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
@@ -113,5 +150,5 @@
     "velocity": 0,
     "rotation": 179.28384005452963
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
