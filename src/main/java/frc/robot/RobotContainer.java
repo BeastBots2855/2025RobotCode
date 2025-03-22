@@ -91,7 +91,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
-  CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
   CommandXboxController m_fightstick = new CommandXboxController(OIConstants.kFightStickPort);
   ShuffleboardTab tab = Shuffleboard.getTab("main tab");
@@ -265,7 +265,7 @@ public class RobotContainer {
       new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1)
         .whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
      
-    
+      new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroGyroWithAlliance()));
     /**
      * slows drive to 10% when elevator is above L2
      */
@@ -313,7 +313,7 @@ public class RobotContainer {
     m_fightstick.button(10).onTrue(new InstantCommand(()->m_elevator.resetEncoders()));
     //fightstick intake to lightsensor button 6
     m_fightstick.button(6).onTrue(new CoralHold(m_CoralBox));
-    m_driverController.button (8).onTrue(new InstantCommand(()->m_robotDrive.zeroGyroWithAlliance()));
+   // m_driverController.button(8).onTrue(new InstantCommand(()->m_robotDrive.zeroGyroWithAlliance()));
     //m_fightstick.button(9).onTrue(new InstantCommand(()->m_AlgaeArm.resetPosition()));
     //new RunCommand(()->m_robotDrive.zeroHeading()));
     m_fightstick.button(8).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp));
@@ -358,7 +358,7 @@ public class RobotContainer {
     new Trigger(() -> m_driverController.getRightBumperButton() && m_driverController.getXButton()).onTrue(
       new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L3, ()-> new Translation2d(), ()->Side.RIGHT)
     );
-   new Trigger( m_driverController.button(6) && m_driverController.button(4)).onTrue(
+   new Trigger(()-> m_driverController.getRightBumperButton() && m_driverController.getYButton()).onTrue(
       new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L4, ()-> new Translation2d(), ()->Side.RIGHT)
     );
     
@@ -433,11 +433,11 @@ public class RobotContainer {
 
     private void swapControllers(boolean swapControllers){
       if(swapControllers == false){
-       m_driverController = new CommandXboxController(5);
+       m_driverController = new XboxController(5);
        m_operatorController = new CommandXboxController(OIConstants.kDriverControllerPort);
        swapControllers = true;
       }else{
-        m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+        m_driverController = new XboxController(OIConstants.kDriverControllerPort);
         m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
       }
     }
