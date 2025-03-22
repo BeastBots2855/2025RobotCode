@@ -4,6 +4,7 @@
 
 package frc.robot.commands.algaearm;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AlgaeArmConstants;
@@ -18,13 +19,14 @@ public class GoToSetpoint extends Command {
     addRequirements(subsystem);
     m_AlgaeArm = subsystem;
     m_setpoint = setpoint;
-    // Use addRequirements() here to declare subsystem dependencies.
+    setName("Algae Arm: " + getName() + " " + setpoint);  //so multiple instances can be distinguished
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     m_AlgaeArm.PIDOn();
+    DataLogManager.log("start cmd: " + getName());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -35,7 +37,9 @@ public class GoToSetpoint extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    DataLogManager.log(interrupted ? "interrupt cmd: " + getName() : "end cmd: " + getName());
+  }
 
   // Returns true when the command should end.
   @Override

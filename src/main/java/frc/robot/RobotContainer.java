@@ -112,6 +112,7 @@ public class RobotContainer {
   private final LED m_ledString = new LED(0);
   private final AlgaeArm m_AlgaeArm = new AlgaeArm(m_AlgaeArmMotor);
   private SendableChooser<String> autoChooser;
+  private boolean swapControllers;
  
   private final Climber m_Climb = new Climber(m_rightClimb, m_lefClimb);
 //   private final LED m_ledStringRight = new LED(1);
@@ -139,6 +140,7 @@ public class RobotContainer {
     namedCommands.put("CoralOut", new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed()));
     namedCommands.put("AlgaeRemoveL2", new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L2Algae));
     namedCommands.put("AlgaeRemoveL3", new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
+    namedCommands.put("stopWheels", new InstantCommand(()->m_CoralBox.spin(0)));
 
 
     //Command CoralHold = new CoralHold(m_CoralBox);
@@ -163,6 +165,7 @@ public class RobotContainer {
       autoChooser.addOption("GoofyAuto", "GoofyAuto");
       autoChooser.addOption("3PieceChickenDinner", "3PieceChickenDinner");
       autoChooser.addOption("DoSomeRightSideStuff", "DoSomeRightSideStuff");
+      autoChooser.addOption("CenterPath", "CenterPath");
     // Configure the button bindings
     configureButtonBindings();
 
@@ -316,7 +319,7 @@ public class RobotContainer {
     m_fightstick.button(8).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kUp));
     m_fightstick.button(7).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kDown));
     m_operatorController.button(8).onTrue(new AlgaeZero(m_AlgaeArm));
-    m_fightstick.button(9).onTrue(new InstantCommand(()->swapControllers(true)));
+    m_fightstick.button(9).onTrue(new InstantCommand(()->swapControllers(swapControllers)));
    
    /* m_operatorController.button(6).onTrue(
       new ElevatorToSetpoint(ElevatorPIDSetpoints.L2Algae, m_elevator)
@@ -333,7 +336,7 @@ public class RobotContainer {
 
 
 
-/* 
+
     new Trigger(() -> m_driverController.getLeftBumperButton() && m_driverController.getAButton()).onTrue(
       new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.Base, ()-> new Translation2d(), ()->Side.LEFT)
     );
@@ -355,10 +358,10 @@ public class RobotContainer {
     new Trigger(() -> m_driverController.getRightBumperButton() && m_driverController.getXButton()).onTrue(
       new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L3, ()-> new Translation2d(), ()->Side.RIGHT)
     );
-    new Trigger(() -> m_driverController.getRightBumperButton() && m_driverController.getYButton()).onTrue(
+   new Trigger( m_driverController.button(6) && m_driverController.button(4)).onTrue(
       new TeleopDriveToNearestReef(m_robotDrive, m_elevator, m_CoralBox, ElevatorPIDSetpoints.L4, ()-> new Translation2d(), ()->Side.RIGHT)
     );
-    */
+    
   }
 
   /**
@@ -429,9 +432,10 @@ public class RobotContainer {
     }
 
     private void swapControllers(boolean swapControllers){
-      if(swapControllers){
-       m_driverController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+      if(swapControllers == false){
+       m_driverController = new CommandXboxController(5);
        m_operatorController = new CommandXboxController(OIConstants.kDriverControllerPort);
+       swapControllers = true;
       }else{
         m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
         m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);

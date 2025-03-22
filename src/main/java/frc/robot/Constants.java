@@ -123,8 +123,8 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
-    public static final PIDConstants kPIDDrive = new PIDConstants(3.2,0.0, 0);
-    public static final PIDConstants kPIDRot = new PIDConstants(3.0, 0.0, 0.0);
+    public static final PIDConstants kPIDDrive = new PIDConstants(2.2,0.0, 0);
+    public static final PIDConstants kPIDRot = new PIDConstants(1.0, 0.0, 0.0);
 
     public static final double kMassKg = 135/2.2;
     //public static final ModuleConfig moduleconfig = new ModuleConfig(ModuleConstants.kWheelDiameterMeters/2, DriveConstants.kMaxSpeedMetersPerSecond, 1, , 60.0, 0);
