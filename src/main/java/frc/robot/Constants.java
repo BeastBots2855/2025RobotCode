@@ -123,8 +123,8 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
-    public static final PIDConstants kPIDDrive = new PIDConstants(2.2,0.0, 0);
-    public static final PIDConstants kPIDRot = new PIDConstants(1.0, 0.0, 0.0);
+    public static final PIDConstants kPIDDrive = new PIDConstants(3,0.0, 0);
+    public static final PIDConstants kPIDRot = new PIDConstants(1.5, 0.0, 0.0);
 
     public static final double kMassKg = 135/2.2;
     //public static final ModuleConfig moduleconfig = new ModuleConfig(ModuleConstants.kWheelDiameterMeters/2, DriveConstants.kMaxSpeedMetersPerSecond, 1, , 60.0, 0);
@@ -156,8 +156,8 @@ public final class Constants {
   public static final class ElevatorPIDSetpoints{
     public static final double Base = .7;
     public static final double L1 = 4.0;
-    public static final double L2 = 6.47; //5.47
-    public static final double L3 = 13.7; //12.28
+    public static final double L2 = 6.27; //6.47
+    public static final double L3 = 13.5; //13.7
     public static final double L4 = 24.8; //24
     public static final double Top = 24.15;
     public static final double Half = 12.07;

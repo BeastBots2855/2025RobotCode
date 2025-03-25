@@ -9,12 +9,6 @@
           "data": {
             "pathName": "barge to ER4"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlgaeRemoveL3"
-          }
         }
       ]
     }

@@ -41,7 +41,7 @@ public class CoralOut extends Command {
   @Override
   public void execute() {
 
-    m_CoralBox.spin(m_speed.getAsDouble() * 2);
+    m_CoralBox.spin(CoralBoxConstants.kSpeed / 2);
   }
 
   // Called once the command ends or is interrupted.

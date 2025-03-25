@@ -112,7 +112,7 @@ public class RobotContainer {
   private final LED m_ledString = new LED(0);
   private final AlgaeArm m_AlgaeArm = new AlgaeArm(m_AlgaeArmMotor);
   private SendableChooser<String> autoChooser;
-  private boolean swapControllers;
+  private boolean swapControllers = false;
  
   private final Climber m_Climb = new Climber(m_rightClimb, m_lefClimb);
 //   private final LED m_ledStringRight = new LED(1);
@@ -125,7 +125,7 @@ public class RobotContainer {
 
     
     //start logging
-    DataLogManager.start();
+    // DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());  //logs joystick and button inputs
     DataLogManager.log("Log started");
 
@@ -141,6 +141,7 @@ public class RobotContainer {
     namedCommands.put("AlgaeRemoveL2", new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L2Algae));
     namedCommands.put("AlgaeRemoveL3", new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
     namedCommands.put("stopWheels", new InstantCommand(()->m_CoralBox.spin(0)));
+    namedCommands.put("spinWheels", new RunCommand(()->m_CoralBox.spin(1.0)));
 
 
     //Command CoralHold = new CoralHold(m_CoralBox);
@@ -166,6 +167,8 @@ public class RobotContainer {
       autoChooser.addOption("3PieceChickenDinner", "3PieceChickenDinner");
       autoChooser.addOption("DoSomeRightSideStuff", "DoSomeRightSideStuff");
       autoChooser.addOption("CenterPath", "CenterPath");
+      autoChooser.addOption("leftSide1Piece", "leftSide1Piece");
+      autoChooser.addOption("rightSide1Piece", "rightSide1Piece");
     // Configure the button bindings
     configureButtonBindings();
 
@@ -304,11 +307,10 @@ public class RobotContainer {
    // m_fightstick.button(9).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
     m_fightstick.button(4).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
     m_fightstick.button(1).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L3, m_elevator));
-    m_fightstick.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator).alongWith(new GoToSetpoint(m_AlgaeArm,AlgaeArmConstants.kLineUp)));
+    m_fightstick.button(2).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.L4, m_elevator));
     m_fightstick.button(5).onTrue(new CoralOut(m_CoralBox, ()-> 0.5));
     m_fightstick.button(
       3).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator).andThen(new WaitCommand(0.5))
-     .alongWith(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kDown))
       .andThen(new InstantCommand(()->m_elevator.PIDOff())));
     m_fightstick.button(10).onTrue(new InstantCommand(()->m_elevator.resetEncoders()));
     //fightstick intake to lightsensor button 6
@@ -433,12 +435,13 @@ public class RobotContainer {
 
     private void swapControllers(boolean swapControllers){
       if(swapControllers == false){
-       m_driverController = new XboxController(5);
+       m_driverController = new XboxController(OIConstants.kOperatorControllerPort);
        m_operatorController = new CommandXboxController(OIConstants.kDriverControllerPort);
        swapControllers = true;
       }else{
         m_driverController = new XboxController(OIConstants.kDriverControllerPort);
         m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+        swapControllers = false;
       }
     }
 

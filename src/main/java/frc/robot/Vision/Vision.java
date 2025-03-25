@@ -102,7 +102,7 @@ import java.util.List;
         
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : metalOrangePiRED.getAllUnreadResults()) {
-            metalOrangePiREDEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D()));
+            metalOrangePiREDEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D().plus(Rotation2d.k180deg)));
             visionEst = metalOrangePiREDEstimator.update(result);
             if (visionEst.isPresent()) {
                 updateEstimationStdDevsConstrained(metalOrangePiREDEstimator, 
@@ -125,7 +125,7 @@ import java.util.List;
         
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : metalOrangePiBLUE.getAllUnreadResults()) {
-            metalOrangePiBLUEEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D()));
+            metalOrangePiBLUEEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D().plus(Rotation2d.k180deg)));
             visionEst = metalOrangePiBLUEEstimator.update(result);
             if (visionEst.isPresent()) {
                 updateEstimationStdDevsConstrained(metalOrangePiBLUEEstimator, 

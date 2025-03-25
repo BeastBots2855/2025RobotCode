@@ -9,12 +9,6 @@
           "data": {
             "pathName": "GoofyPath"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "WaitForCoral"
-          }
         }
       ]
     }
