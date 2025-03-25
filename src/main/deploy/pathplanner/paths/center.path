@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "do",
-      "waypointRelativePos": 0.8779661016949148,
+      "waypointRelativePos": 0.5288135593220356,
       "endWaypointRelativePos": null,
       "command": {
         "type": "sequential",
@@ -80,7 +80,7 @@
                   {
                     "type": "wait",
                     "data": {
-                      "waitTime": 2.0
+                      "waitTime": 1.0
                     }
                   },
                   {
