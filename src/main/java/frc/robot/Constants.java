@@ -258,6 +258,61 @@ public static class AutoScoreConstants {                                        
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      private static final double fieldReflectionMeters = 9.227; 
+
+
+      public static final Pose2d REEF_FACE_ONE_RED = new Pose2d(3.818 + fieldReflectionMeters, 4.014, new Rotation2d());  //AB 
+      public static final Pose2d REEF_FACE_TWO_RED = new Pose2d(4.153 + fieldReflectionMeters, 3.416, new Rotation2d());  //CD
+      public static final Pose2d REEF_FACE_THREE_RED = new Pose2d(4.842 + fieldReflectionMeters, 3.422, new Rotation2d());//EF
+      public static final Pose2d REEF_FACE_FOU_REDR = new Pose2d(5.177 + fieldReflectionMeters, 4.022, new Rotation2d()); //GH
+      public static final Pose2d REEF_FACE_FIV_REDE = new Pose2d(4.840 + fieldReflectionMeters, 4.596, new Rotation2d()); //IJ
+      public static final Pose2d REEF_FACE_SIX_RED = new Pose2d(4.153 + fieldReflectionMeters, 4.014, new Rotation2d());  //KL
+
+      public static final Pose2d[] reefFaceArray = new Pose2d[] {
+        REEF_FACE_ONE_RED,
+        REEF_FACE_TWO_RED,
+        REEF_FACE_THREE_RED,
+        REEF_FACE_FOU_REDR,  // Note: this naming is inconsistent in Constants
+        REEF_FACE_FIV_REDE,  // Note: this naming is inconsistent in Constants
+        REEF_FACE_SIX_RED
+    };
+
+
+      //FOR REFERNCE THESE ARE NOT THE CORECT LABLED POLES BUT THE METHOD THEY ARE UTILIZED IN DOESN'T CARE ABOUT THEIR NAMES JUST THAT THEY POSES EXIST  
+      public static final Pose2d PoleA_RED = new Pose2d(3.227 + fieldReflectionMeters, 4.191, Rotation2d.fromDegrees(0));
+      public static final Pose2d PoleB_RED = new Pose2d(3.217 + fieldReflectionMeters, 3.859, Rotation2d.fromDegrees(0));
+      public static final Pose2d PoleC_RED = new Pose2d(3.725 + fieldReflectionMeters, 3.011, Rotation2d.fromDegrees(60));
+      public static final Pose2d PoleD_RED = new Pose2d(3.988 + fieldReflectionMeters, 2.835, Rotation2d.fromDegrees(60));
+      public static final Pose2d PoleE_RED = new Pose2d(4.963 + fieldReflectionMeters, 2.806, Rotation2d.fromDegrees(120));
+      public static final Pose2d PoleF_RED = new Pose2d(5.265 + fieldReflectionMeters, 2.992, Rotation2d.fromDegrees(120));
+      public static final Pose2d PoleG_RED = new Pose2d(5.772 + fieldReflectionMeters, 3.851, Rotation2d.fromDegrees(180));
+      public static final Pose2d PoleH_RED = new Pose2d(5.782 + fieldReflectionMeters, 4.171, Rotation2d.fromDegrees(180));
+      public static final Pose2d PoleI_RED = new Pose2d(5.245 + fieldReflectionMeters, 5.058, Rotation2d.fromDegrees(-120));
+      public static final Pose2d PoleJ_RED = new Pose2d(4.982 + fieldReflectionMeters, 5.205, Rotation2d.fromDegrees(-120));
+      public static final Pose2d PoleK_RED = new Pose2d(4.007 + fieldReflectionMeters, 5.195, Rotation2d.fromDegrees(-60));
+      public static final Pose2d PoleL_RED = new Pose2d(3.705 + fieldReflectionMeters,5.010, Rotation2d.fromDegrees(-60));
+
+
+
+
+
+
+
       public static final Pose2d Left = new Pose2d(3.705,5.010, Rotation2d.fromDegrees(-60));
     }
 
