@@ -48,12 +48,30 @@
   "eventMarkers": [
     {
       "name": "CoralHold",
-      "waypointRelativePos": 0.8338983050847438,
+      "waypointRelativePos": 0.32203389830508605,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
           "name": "CoralHold"
+        }
+      }
+    },
+    {
+      "name": "wait",
+      "waypointRelativePos": 0.9254237288135568,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "race",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 2.0
+              }
+            }
+          ]
         }
       }
     }

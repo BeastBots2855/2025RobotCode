@@ -40,6 +40,7 @@ public class Elevator extends SubsystemBase {
   // Flag to track if the current has exceeded the safe threshold.
   private boolean currentLimitExceeded;
 
+
   // The current desired setpoint for the elevator position.
   private double currDesiredSetpoint;
 
@@ -278,8 +279,8 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
       // Check if the supply current for either motor exceeds 20 Amps and update the flag.
-      currentLimitExceeded = ((m_left.getSupplyCurrent().getValueAsDouble() > 20) ||
-                              (m_right.getSupplyCurrent().getValueAsDouble() > 20));
+      currentLimitExceeded = ((m_left.getSupplyCurrent().getValueAsDouble() > 40) ||
+                              (m_right.getSupplyCurrent().getValueAsDouble() > 40 ));
   
       // If PID control is enabled, create a MotionMagicVoltage command using the current setpoint
       // and apply it to both motors for smooth positional control. We are setting the setpiont in 

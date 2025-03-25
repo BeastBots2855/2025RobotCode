@@ -103,7 +103,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.05;
+    public static final double kDriveDeadband = 0.15;
     public static final int kOperatorControllerPort = 1;
     public static final double kOperatorDeadband = 0.05;
     public static final int kFightStickPort = 2;
@@ -123,8 +123,8 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
-    public static final PIDConstants kPIDDrive = new PIDConstants(3.2,0.0,0.2);
-    public static final PIDConstants kPIDRot = new PIDConstants(3.0, 0.0, 0.0);
+    public static final PIDConstants kPIDDrive = new PIDConstants(3,0.0, 0);
+    public static final PIDConstants kPIDRot = new PIDConstants(1.5, 0.0, 0.0);
 
     public static final double kMassKg = 135/2.2;
     //public static final ModuleConfig moduleconfig = new ModuleConfig(ModuleConstants.kWheelDiameterMeters/2, DriveConstants.kMaxSpeedMetersPerSecond, 1, , 60.0, 0);
@@ -156,11 +156,13 @@ public final class Constants {
   public static final class ElevatorPIDSetpoints{
     public static final double Base = .7;
     public static final double L1 = 4.0;
-    public static final double L2 = 6.47; //5.47
-    public static final double L3 = 13.7; //12.28
+    public static final double L2 = 6.27; //6.47
+    public static final double L3 = 13.5; //13.7
     public static final double L4 = 24.8; //24
     public static final double Top = 24.15;
     public static final double Half = 12.07;
+    public static final double L2Algae = 6.47;
+    public static final double L3Algae = 13.7;
   }
 
   public static final class Colors{
@@ -179,9 +181,10 @@ public final class Constants {
     public static final double kD = 0.0;
     public static final double currentLimit = 15.0;
 
-    public static final double kUp = -15;
+    public static final double kUp = -20;
     public static final double kDown = 2;
     public static final double kZero = 0;
+    public static final double kLineUp = 10;
   }
 
 
@@ -200,16 +203,16 @@ public final class Constants {
 
 
 
-    public static final String kMetalOrangePiRED = "MetalOrangePiRED";
+    public static final String kMetalOrangePiRED = "MetalOrangePiREDCamera";
     public static final Transform3d kRobotToMetalREDTransform =
-        new Transform3d(new Translation3d(0.24892, -0.206375, 0.159004), new Rotation3d(0, 0, 0));
+        new Transform3d(new Translation3d(0.24892, -0.206375, 0.159004), new Rotation3d(0, 0, Math.toRadians(31)));
 
-    public static final String kMetalOrangePiBLUE = "MetalOrangePiBlue";
+    public static final String kMetalOrangePiBLUE = "MetalOrangePiBlueCamera";
     public static final Transform3d kRobotToMetalBLUETransform =
-      new Transform3d(new Translation3d(0.24892, 0.206375, 0.159004), new Rotation3d(0, 0, 0));
+      new Transform3d(new Translation3d(0.24892, 0.206375, 0.159004), new Rotation3d(0, 0, Math.toRadians(-31)));
 
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(2, 2, 0);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 0);
   }
 
 

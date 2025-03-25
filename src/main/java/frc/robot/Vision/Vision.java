@@ -66,8 +66,6 @@ import java.util.List;
  
      public Vision() {
             // plasticOrangePiEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
-            metalOrangePiREDEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
-            metalOrangePiBLUEEstimator.setMultiTagFallbackStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
      }
 
 
@@ -104,7 +102,7 @@ import java.util.List;
         
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : metalOrangePiRED.getAllUnreadResults()) {
-            metalOrangePiREDEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D()));
+            metalOrangePiREDEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D().plus(Rotation2d.k180deg)));
             visionEst = metalOrangePiREDEstimator.update(result);
             if (visionEst.isPresent()) {
                 updateEstimationStdDevsConstrained(metalOrangePiREDEstimator, 
@@ -127,7 +125,7 @@ import java.util.List;
         
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : metalOrangePiBLUE.getAllUnreadResults()) {
-            metalOrangePiBLUEEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D()));
+            metalOrangePiBLUEEstimator.addHeadingData(result.getTimestampSeconds(), new Rotation3d(m_driveTrain.getHeadingRotation2D().plus(Rotation2d.k180deg)));
             visionEst = metalOrangePiBLUEEstimator.update(result);
             if (visionEst.isPresent()) {
                 updateEstimationStdDevsConstrained(metalOrangePiBLUEEstimator, 
@@ -279,16 +277,8 @@ import java.util.List;
              if (numTags == 1 && avgDist > 4)
                  estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
              else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
-             estStdDevs.set(2, 0, 99999999);
              curStdDevs = estStdDevs;
-         } 
-
-         
-         if(avgDist < 2.5) {
-            curStdDevs = VecBuilder.fill(0.7, 0.7, 99999);
-            } else {
-               curStdDevs = VecBuilder.fill(10000, 100000, 99999);
-        }
+         }
      }
  }
 

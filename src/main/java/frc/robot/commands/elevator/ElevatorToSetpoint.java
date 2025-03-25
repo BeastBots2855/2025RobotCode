@@ -45,7 +45,7 @@ public class ElevatorToSetpoint extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    boolean finished = (Math.abs(m_elevator.getTargetPos() - m_elevator.getPos()) < 1);
+    boolean finished = (Math.abs(m_elevator.getTargetPos() - m_elevator.getPos()) < 3);
     DataLogManager.log("at setpoint: " + finished);
     return finished;
   }

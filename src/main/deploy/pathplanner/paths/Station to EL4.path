@@ -84,6 +84,35 @@
       }
     },
     {
+      "name": "CoralOut",
+      "waypointRelativePos": 0.9423728813559318,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "CoralOut"
+        }
+      }
+    },
+    {
+      "name": "wait",
+      "waypointRelativePos": 0.949152542372882,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 3.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
       "name": "ElevatorToBase",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
