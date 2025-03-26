@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.514426369863015,
-        "y": 6.7671875
+        "x": 5.716756043130516,
+        "y": 6.649298916827843
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 5.055
       },
       "prevControl": {
-        "x": 6.168730642820215,
-        "y": 6.185653151985205
+        "x": 5.836945987474181,
+        "y": 5.8796423780341955
       },
       "nextControl": null,
       "isLocked": false,
@@ -56,72 +56,7 @@
       "name": "Point Towards Zone"
     }
   ],
-  "eventMarkers": [
-    {
-      "name": "stop wheels",
-      "waypointRelativePos": 0.8237288135593227,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "stopWheels"
-        }
-      }
-    },
-    {
-      "name": "ElevatorToL4",
-      "waypointRelativePos": 0.8271186440677979,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "race",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "ElevatorToL4"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "run box",
-      "waypointRelativePos": 0.969491525423729,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "deadline",
-        "data": {
-          "commands": [
-            {
-              "type": "wait",
-              "data": {
-                "waitTime": 2.0
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "CoralOut"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "ElevatorToBase",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ElevatorToBase"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

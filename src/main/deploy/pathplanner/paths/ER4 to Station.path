@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.304066780821918,
-        "y": 2.9356378424657534
+        "x": 5.176480263157895,
+        "y": 2.9185032894736844
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.153802917077947,
-        "y": 1.8087124078821446
+        "x": 4.982403183487964,
+        "y": 1.9427925198872207
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.473,
-        "y": 0.817
+        "x": 0.9236842105263158,
+        "y": 0.8498355263157896
       },
       "prevControl": {
-        "x": 1.721121727691592,
-        "y": 0.951719106254286
+        "x": 0.9196054143329851,
+        "y": 1.0998022509445153
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,8 +35,8 @@
       "minWaypointRelativePos": 0.8542372881355932,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 0.3,
-        "maxAcceleration": 0.3,
+        "maxVelocity": 0.35,
+        "maxAcceleration": 0.35,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -45,37 +45,7 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "CoralHold",
-      "waypointRelativePos": 0.32203389830508605,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "CoralHold"
-        }
-      }
-    },
-    {
-      "name": "wait",
-      "waypointRelativePos": 0.9254237288135568,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "race",
-        "data": {
-          "commands": [
-            {
-              "type": "wait",
-              "data": {
-                "waitTime": 2.0
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

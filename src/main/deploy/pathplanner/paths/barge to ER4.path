@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "do",
-      "waypointRelativePos": 0.8886894075403959,
+      "waypointRelativePos": 0.786355475763017,
       "endWaypointRelativePos": null,
       "command": {
         "type": "sequential",

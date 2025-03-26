@@ -137,7 +137,7 @@ public class RobotContainer {
     namedCommands.put("ElevatorToL2", new ElevatorToSetpoint(ElevatorPIDSetpoints.L2, m_elevator));
     namedCommands.put("ElevatorToL1", new ElevatorToSetpoint(ElevatorPIDSetpoints.L1, m_elevator));
     namedCommands.put("ElevatorToBase", new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator));
-    namedCommands.put("CoralOut", new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed()));
+    namedCommands.put("CoralOut", new CoralOut(m_CoralBox,()-> m_CoralBox.getAutoCoralSpeed(), true));
     namedCommands.put("AlgaeRemoveL2", new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L2Algae));
     namedCommands.put("AlgaeRemoveL3", new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
     namedCommands.put("stopWheels", new InstantCommand(()->m_CoralBox.spin(0)));
@@ -169,6 +169,7 @@ public class RobotContainer {
       autoChooser.addOption("CenterPath", "CenterPath");
       autoChooser.addOption("leftSide1Piece", "leftSide1Piece");
       autoChooser.addOption("rightSide1Piece", "rightSide1Piece");
+      autoChooser.addOption("the real center auto", "the real center path");
     // Configure the button bindings
     configureButtonBindings();
 
@@ -231,8 +232,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
    
 
-    new Trigger(()->m_driverController.getRightTriggerAxis() > 0.05).whileTrue(new Climb(() -> m_driverController.getRightTriggerAxis() * 0.5, m_Climb));
-    new Trigger(()->m_driverController.getLeftTriggerAxis() > 0.05).whileTrue(new Climb(() -> -m_driverController.getLeftTriggerAxis() * 0.5, m_Climb));         
+    new Trigger(()->m_driverController.getRightTriggerAxis() > 0.05).whileTrue(new Climb(() -> m_driverController.getRightTriggerAxis() * 0.75, m_Climb));
+    new Trigger(()->m_driverController.getLeftTriggerAxis() > 0.05).whileTrue(new Climb(() -> -m_driverController.getLeftTriggerAxis() * 0.75, m_Climb));         
 
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
