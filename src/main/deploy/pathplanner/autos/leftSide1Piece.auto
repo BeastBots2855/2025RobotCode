@@ -11,22 +11,15 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ElevatorToL4"
-                }
-              }
-            ]
+            "name": "ElevatorToL4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
           }
         },
         {
@@ -36,7 +29,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
+                  "waitTime": 0.25
                 }
               },
               {
@@ -57,7 +50,55 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL4 to station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoralHold"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "station to BR1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoralOut"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElevatorToBase"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "left clear"
           }
         }
       ]

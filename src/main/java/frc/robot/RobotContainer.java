@@ -163,12 +163,12 @@ public class RobotContainer {
     NamedCommands.registerCommands(namedCommands);
 
       autoChooser = new SendableChooser<>();
-      autoChooser.addOption("GoofyAuto", "GoofyAuto");
-      autoChooser.addOption("3PieceChickenDinner", "3PieceChickenDinner");
-      autoChooser.addOption("DoSomeRightSideStuff", "DoSomeRightSideStuff");
-      autoChooser.addOption("CenterPath", "CenterPath");
-      autoChooser.addOption("leftSide1Piece", "leftSide1Piece");
-      autoChooser.addOption("rightSide1Piece", "rightSide1Piece");
+      //autoChooser.addOption("GoofyAuto", "GoofyAuto");
+      //autoChooser.addOption("3PieceChickenDinner", "3PieceChickenDinner");
+      //autoChooser.addOption("DoSomeRightSideStuff", "DoSomeRightSideStuff");
+      //autoChooser.addOption("CenterPath", "CenterPath");
+      autoChooser.addOption("leftSide2Piece", "leftSide1Piece");
+      autoChooser.addOption("rightSide2Piece", "rightSide1Piece");
       autoChooser.addOption("the real center auto", "the real center path");
     // Configure the button bindings
     configureButtonBindings();
@@ -232,8 +232,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
    
 
-    new Trigger(()->m_driverController.getRightTriggerAxis() > 0.05).whileTrue(new Climb(() -> m_driverController.getRightTriggerAxis() * 0.75, m_Climb));
-    new Trigger(()->m_driverController.getLeftTriggerAxis() > 0.05).whileTrue(new Climb(() -> -m_driverController.getLeftTriggerAxis() * 0.75, m_Climb));         
+    new Trigger(()->m_driverController.getRightTriggerAxis() > 0.05).whileTrue(new Climb(() -> m_driverController.getRightTriggerAxis(), m_Climb));
+    new Trigger(()->m_driverController.getLeftTriggerAxis() > 0.05).whileTrue(new Climb(() -> -m_driverController.getLeftTriggerAxis(), m_Climb));         
 
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
@@ -268,6 +268,8 @@ public class RobotContainer {
         .whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
       new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1)
         .whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
+      new Trigger(()->m_fightstick.getLeftX() > .5).onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
+      new Trigger(()->m_fightstick.getLeftX() < -.5).onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L2Algae));
      
       new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroGyroWithAlliance()));
     /**
