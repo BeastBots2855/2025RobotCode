@@ -30,7 +30,7 @@ public class AutoAlgaeRemove extends SequentialCommandGroup {
      //new GoToSetpoint(algaeSubsystem, AlgaeArmConstants.kUp),
      
     // new RunCommand(()->coralSubsystem.spin(1.0), coralSubsystem),
-     new RunCommand(()->algaeSubsystem.move(-.5)).withTimeout(1.5),
+     new RunCommand(()->algaeSubsystem.move(-1.0)).withTimeout(1.5),
      new RunCommand(()->coralSubsystem.spin(-1)).withTimeout(2),
       //new GoToSetpoint(algaeSubsystem, AlgaeArmConstants.kDown),
       new RunCommand(()->algaeSubsystem.move(1.0)).withTimeout(.5),

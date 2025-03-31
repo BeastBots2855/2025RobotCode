@@ -158,11 +158,12 @@ public final class Constants {
     public static final double L1 = 4.0;
     public static final double L2 = 6.27; //6.47
     public static final double L3 = 13.5; //13.7
-    public static final double L4 = 24.8; //24
+    public static final double L4 = 24.55; //24.8
     public static final double Top = 24.15;
     public static final double Half = 12.07;
     public static final double L2Algae = 6.47;
     public static final double L3Algae = 13.7;
+    public static final double LineUp = 4.5;
   }
 
   public static final class Colors{

@@ -170,8 +170,10 @@ public class RobotContainer {
       autoChooser.addOption("leftSide2Piece", "leftSide1Piece");
       autoChooser.addOption("rightSide2Piece", "rightSide1Piece");
       autoChooser.addOption("the real center auto", "the real center path");
+      autoChooser.addOption("the real center path L1", "the real center path L1");
     // Configure the button bindings
     configureButtonBindings();
+    
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -237,12 +239,12 @@ public class RobotContainer {
 
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
-    new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
+    new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -0.5));
    
    /**
     * driver can slow robot to 25% output by pressing either trigger
     */
-    new Trigger(()->m_driverController.getRightTriggerAxis() > .8).whileTrue(new RunCommand(
+   /*  new Trigger(()->m_driverController.getRightTriggerAxis() > .8).whileTrue(new RunCommand(
       () -> m_robotDrive.drive(
           -MathUtil.applyDeadband(m_driverController.getLeftY() * .25, OIConstants.kDriveDeadband),
           -MathUtil.applyDeadband(m_driverController.getLeftX() * .25, OIConstants.kDriveDeadband),
@@ -255,7 +257,7 @@ public class RobotContainer {
       -MathUtil.applyDeadband(m_driverController.getRightX() * .25, OIConstants.kDriveDeadband),
       true),
       m_robotDrive));
-      
+      */
       new Trigger(
         ()->m_elevator.isLimitSwitchPressed() == true)
           .onTrue(new WaitCommand(.1)
@@ -268,8 +270,8 @@ public class RobotContainer {
         .whileTrue(new MoveArm(m_AlgaeArm, ()->m_fightstick.getLeftY()));
       new Trigger(()->Math.abs(m_operatorController.getRightY()) > .1)
         .whileTrue(new MoveArm(m_AlgaeArm, ()->m_operatorController.getRightY()));
-      new Trigger(()->m_fightstick.getLeftX() > .5).onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
-      new Trigger(()->m_fightstick.getLeftX() < -.5).onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L2Algae));
+     // new Trigger(()->m_fightstick.getLeftX() > .5).onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
+     // new Trigger(()->m_fightstick.getLeftX() < -.5).onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L2Algae));
      
       new JoystickButton(m_driverController, 8).onTrue(new InstantCommand(()->m_robotDrive.zeroGyroWithAlliance()));
     /**
@@ -289,6 +291,8 @@ public class RobotContainer {
     
     m_operatorController.axisGreaterThan(3, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getRightTriggerAxis()));
     m_operatorController.axisGreaterThan(2, .05).whileTrue(new CoralOut(m_CoralBox, ()->m_operatorController.getLeftTriggerAxis() * -1));
+    m_operatorController.povUp().onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
+    m_operatorController.povDown().onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L2Algae));
     m_fightstick.axisGreaterThan(2, 0.5).whileTrue(new CoralJuggle(m_CoralBox, ()->m_fightstick.getLeftTriggerAxis()));
     m_fightstick.axisGreaterThan(3, 0.5).whileTrue(new CoralOut(m_CoralBox, ()->m_fightstick.getRightTriggerAxis() * -0.5));
     
@@ -325,6 +329,9 @@ public class RobotContainer {
     m_fightstick.button(7).onTrue(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kDown));
     m_operatorController.button(8).onTrue(new AlgaeZero(m_AlgaeArm));
     m_fightstick.button(9).onTrue(new InstantCommand(()->swapControllers(swapControllers)));
+    m_operatorController.povLeft().onTrue(new InstantCommand(()->m_CoralBox.spin(0.0))
+    .andThen(new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator))
+    .andThen(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kZero)));
    
    /* m_operatorController.button(6).onTrue(
       new ElevatorToSetpoint(ElevatorPIDSetpoints.L2Algae, m_elevator)
@@ -336,7 +343,7 @@ public class RobotContainer {
       .andThen(new GoToSetpoint(m_AlgaeArm, AlgaeArmConstants.kDown))
     );
      */
-    m_operatorController.button(5).onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
+    m_operatorController.button(5).onTrue(new ElevatorToSetpoint(ElevatorPIDSetpoints.LineUp, m_elevator));
     m_operatorController.button(6).onTrue(new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L2Algae));
 
 
