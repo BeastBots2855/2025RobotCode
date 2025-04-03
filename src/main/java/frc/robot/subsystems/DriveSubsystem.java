@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -60,7 +61,7 @@ public class DriveSubsystem extends SubsystemBase {
   // The gyro sensor
   private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
 
-  private final boolean isVisionEnabled = true;
+  private final boolean isVisionEnabled = false;
 
   Field2d field = new Field2d();
 

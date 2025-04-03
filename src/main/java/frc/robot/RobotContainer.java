@@ -142,7 +142,7 @@ public class RobotContainer {
     namedCommands.put("AlgaeRemoveL3", new AutoAlgaeRemove(m_elevator, m_CoralBox, m_AlgaeArm, ElevatorPIDSetpoints.L3Algae));
     namedCommands.put("stopWheels", new InstantCommand(()->m_CoralBox.spin(0)));
     namedCommands.put("spinWheels", new RunCommand(()->m_CoralBox.spin(1.0)));
-
+    namedCommands.put("reZero", new InstantCommand(()->m_robotDrive.zeroHeading()));
 
     //Command CoralHold = new CoralHold(m_CoralBox);
     //Command ElevatorToBase = new ElevatorToSetpoint(ElevatorPIDSetpoints.Base, m_elevator);
@@ -239,7 +239,7 @@ public class RobotContainer {
 
     // m_operatorController.axisGreaterThan(1, .1).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
 
-    new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -0.5));
+    new Trigger(()-> Math.abs(m_operatorController.getLeftY()) > 0.1 ).whileTrue(new MoveElevator(m_elevator, ()->m_operatorController.getLeftY() * -1));
    
    /**
     * driver can slow robot to 25% output by pressing either trigger

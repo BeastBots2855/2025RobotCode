@@ -30,6 +30,16 @@ public class Climber extends SubsystemBase {
     return m_Encoder.getPosition();
   }
 
+  public boolean currentLimitReached(){
+    boolean placeholder;
+    if(m_left.getOutputCurrent() > 30 || m_right.getOutputCurrent() > 30){
+      placeholder = true;
+    }else{
+      placeholder = false;
+    }
+    return placeholder;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

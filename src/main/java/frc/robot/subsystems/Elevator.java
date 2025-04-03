@@ -237,8 +237,9 @@ public class Elevator extends SubsystemBase {
       
         // Scale speed by 0.25 and apply to both motors.
 
-        m_left.set(speed *= .15);
-        m_right.set(speed *= .15);
+        m_left.set(speed *= .3);
+        m_right.set(speed *= .3
+        );
         System.out.println("running");
     }
   }

@@ -100,6 +100,12 @@
           "data": {
             "pathName": "left clear"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "reZero"
+          }
         }
       ]
     }
